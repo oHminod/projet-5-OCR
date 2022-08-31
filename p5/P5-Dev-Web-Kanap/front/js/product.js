@@ -46,7 +46,55 @@ function afficherCanap(obj) {
     }
 }
 
-function ajoutPanier(event) {
+// function ajoutPanier(event) {
+//     let color = colors.options[colors.selectedIndex].text;
+//     if (color === "--SVP, choisissez une couleur --") {
+//         alert("Sélectionnez une couleur dans la liste");
+//         return
+//     }
+//     let quantity = parseInt(document.getElementById('quantity').value);
+//     if (quantity <= 0) {
+//         alert("Sélectionnez une quantité");
+//         return
+//     }
+//     let panier = [id, color, quantity];
+//     panier = panier.join('|');
+
+
+//     if (localStorage.getItem('panier')) {
+//         let tabMulti = localStorage.getItem('panier').split('%');
+//         if (tabMulti.length == 1) {
+//             let tabCommande = tabMulti[0].split('|');
+//             if (tabCommande[0] == id) {
+//                 if (tabCommande[1] == color) {
+//                     tabCommande[2] = parseInt(tabCommande[2]);
+//                     console.log(tabCommande[2]);
+//                     tabCommande[2] += quantity;
+//                     localStorage.setItem('panier', tabCommande.join('|'));
+//                     return
+//                 }
+//             }
+//         }
+//         let commande = [];
+//         commande.push(localStorage.getItem('panier'));
+//         commande.push(panier);
+//         commande = commande.join('%');
+//         localStorage.setItem('panier', commande);
+//         return
+//     }
+//     localStorage.setItem('panier', panier);
+// }
+
+document.getElementById('addToCart').addEventListener('click', (e) => {
+    e.preventDefault;
+    //ajoutPanier(e);
+    ajoutPan(e);
+})
+
+
+
+
+function ajoutPan(event) {
     let color = colors.options[colors.selectedIndex].text;
     if (color === "--SVP, choisissez une couleur --") {
         alert("Sélectionnez une couleur dans la liste");
@@ -57,36 +105,51 @@ function ajoutPanier(event) {
         alert("Sélectionnez une quantité");
         return
     }
-    let panier = [id, color, quantity];
-    panier = panier.join('|');
+    let panier = {
+        "id": id,
+        "color": color,
+        "quantity": quantity
+    };
+    
+    //panier = panier.join('|');
 
 
     if (localStorage.getItem('panier')) {
-        let tabCommande = localStorage.getItem('panier').split('|');
-        if (tabCommande[0] == id) {
-            if (tabCommande[1] == color) {
-                tabCommande[2] = parseInt(tabCommande[2]);
-                console.log(tabCommande[2]);
-                tabCommande[2] += quantity;
-                localStorage.setItem('panier', tabCommande.join('|'));
+        let tabMulti = localStorage.getItem('panier').split('%');
+        //console.log(tabMulti);
+        // if (tabMulti.length == 1) {
+        for (const i in tabMulti) {
+            let tabCommande = JSON.parse(tabMulti[i]);
+            console.log(panier);
+            if (tabCommande.id == id && tabCommande.color == color) {
+                tabCommande.quantity = parseInt(tabCommande.quantity);
+                //console.log(tabCommande.quantity);
+                tabCommande.quantity += quantity;
+                tabCommande = JSON.stringify(tabCommande);
+                console.log(tabMulti);
+                tabMulti[i] = tabCommande;
+                tabMulti = tabMulti.join('%');
+                localStorage.setItem('panier', tabMulti);
                 return
+            // }else{
             }
         }
-        let commande = [];
-        commande.push(localStorage.getItem('panier'));
-        commande.push(panier);
-        commande = commande.join('%');
-        localStorage.setItem('panier', commande);
+        tabMulti.push(JSON.stringify(panier));
+        tabMulti = tabMulti.join('%');
+        localStorage.setItem('panier', tabMulti);
+
+
+        // }
+        // let commande = [];
+        // commande.push(localStorage.getItem('panier'));
+        // commande.push(panier);
+        // commande = commande.join('%');
+        // localStorage.setItem('panier', JSON.stringify(commande));
         //alert(tabCommande);
         return
         // alert('panier présent');
         // return
     }
-    localStorage.setItem('panier', panier);
+    localStorage.setItem('panier', JSON.stringify(panier));
     //alert(panier);
 }
-
-document.getElementById('addToCart').addEventListener('click', (e) => {
-    e.preventDefault;
-    ajoutPanier(e);
-})
