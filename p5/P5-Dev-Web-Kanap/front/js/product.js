@@ -88,13 +88,14 @@ function afficherCanap(obj) {
 document.getElementById('addToCart').addEventListener('click', (e) => {
     e.preventDefault;
     //ajoutPanier(e);
-    ajoutPan(e);
+    ajoutPan();
 })
 
 
 
 
-function ajoutPan(event) {
+function ajoutPan() {
+    //On récupère les données du formulaire et on fabrique un json dans la variable "panier"
     let color = colors.options[colors.selectedIndex].text;
     if (color === "--SVP, choisissez une couleur --") {
         alert("Sélectionnez une couleur dans la liste");
@@ -110,46 +111,37 @@ function ajoutPan(event) {
         "color": color,
         "quantity": quantity
     };
-    
-    //panier = panier.join('|');
 
-
+    //Si un panier existe dans le locale storage
     if (localStorage.getItem('panier')) {
+        //On récupère le tableau d'objets stringifiés à partir du local storage
         let tabMulti = localStorage.getItem('panier').split('%');
-        //console.log(tabMulti);
-        // if (tabMulti.length == 1) {
+
         for (const i in tabMulti) {
-            let tabCommande = JSON.parse(tabMulti[i]);
-            console.log(panier);
-            if (tabCommande.id == id && tabCommande.color == color) {
-                tabCommande.quantity = parseInt(tabCommande.quantity);
-                //console.log(tabCommande.quantity);
-                tabCommande.quantity += quantity;
-                tabCommande = JSON.stringify(tabCommande);
-                console.log(tabMulti);
-                tabMulti[i] = tabCommande;
+            //Pour chaque item du tableau, on transforme l'item en objet
+            let item = JSON.parse(tabMulti[i]);
+
+            //Si l'id et la couleur de l'item correspondent à l'objet qu'on veut ajouter
+            if (item.id == panier.id && item.color == panier.color) {
+                //on ajoute la quantité en prenant garde de manipuler des nombres
+                item.quantity = parseInt(item.quantity);
+                item.quantity += panier.quantity;
+                item = JSON.stringify(item);
+                //on change la valeur de l'item dans le tableau et on redéfinit le locale storage "panier"
+                tabMulti[i] = item;
                 tabMulti = tabMulti.join('%');
                 localStorage.setItem('panier', tabMulti);
                 return
-            // }else{
             }
         }
+        //On ajoute le panier au tableau d'objets stringifiés, lui-même joint pour faire une string qu'on définit comme valeur du locale storage "panier"
         tabMulti.push(JSON.stringify(panier));
         tabMulti = tabMulti.join('%');
         localStorage.setItem('panier', tabMulti);
 
-
-        // }
-        // let commande = [];
-        // commande.push(localStorage.getItem('panier'));
-        // commande.push(panier);
-        // commande = commande.join('%');
-        // localStorage.setItem('panier', JSON.stringify(commande));
-        //alert(tabCommande);
         return
-        // alert('panier présent');
-        // return
     }
+
+    //On initie le locale storage "panier" avec le premier objet stringifié
     localStorage.setItem('panier', JSON.stringify(panier));
-    //alert(panier);
 }
