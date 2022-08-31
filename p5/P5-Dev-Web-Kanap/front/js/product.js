@@ -124,8 +124,7 @@ function ajoutPan() {
             //Si l'id et la couleur de l'item correspondent à l'objet qu'on veut ajouter
             if (item.id == panier.id && item.color == panier.color) {
                 //on ajoute la quantité en prenant garde de manipuler des nombres
-                item.quantity = parseInt(item.quantity);
-                item.quantity += panier.quantity;
+                item.quantity += parseInt(panier.quantity);
                 item = JSON.stringify(item);
                 //on change la valeur de l'item dans le tableau et on redéfinit le locale storage "panier"
                 tabMulti[i] = item;
