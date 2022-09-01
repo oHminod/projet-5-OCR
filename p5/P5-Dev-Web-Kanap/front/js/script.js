@@ -23,10 +23,6 @@ function dump(obj) {
         out += i + ": " + obj[i] + "\n";
     }
 
-    //alert(out);
-
-    // or, if you wanted to avoid alerts...
-
     var pre = document.createElement('pre');
     pre.innerHTML = out;
     items.appendChild(pre)
@@ -34,11 +30,8 @@ function dump(obj) {
 
 
 function afficherCanaps(tabObj) {
-    //console.log("dans la fonction"); //S'affiche
-    //let num = 0;
+    AfficherQuantitePanier();
     for (let i in tabObj) {
-        // num++;
-        // console.log(`dans la boucle ${num}`); //Ne s'affiche pas
         const canap = document.createElement("a");
         canap.href = `./product.html?id=` + tabObj[i]._id;
 
@@ -62,5 +55,13 @@ function afficherCanaps(tabObj) {
 
 
         items.appendChild(canap);
+    }
+}
+
+function AfficherQuantitePanier() {
+    if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
+        let quantite = parseInt(localStorage.getItem('quantite'));
+        let panNav = document.querySelector('nav > ul > a:last-child > li');
+        panNav.innerText = `Panier (${quantite})`;
     }
 }

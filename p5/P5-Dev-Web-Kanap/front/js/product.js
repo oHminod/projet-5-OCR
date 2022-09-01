@@ -27,11 +27,11 @@ function erreurChargement(erreur) {
 }
 
 function afficherCanap(obj) {
+    AfficherQuantitePanier();
     if (!obj.name) {
         alert("numéro de produit invalide !");
         document.location.href = racine; 
     }
-    //console.log(obj);
     document.querySelector(".item__img").children[0].src = obj.imageUrl;
     document.querySelector(".item__img").children[0].alt = obj.altTxt;
     title.innerText = obj.name;
@@ -46,48 +46,8 @@ function afficherCanap(obj) {
     }
 }
 
-// function ajoutPanier(event) {
-//     let color = colors.options[colors.selectedIndex].text;
-//     if (color === "--SVP, choisissez une couleur --") {
-//         alert("Sélectionnez une couleur dans la liste");
-//         return
-//     }
-//     let quantity = parseInt(document.getElementById('quantity').value);
-//     if (quantity <= 0) {
-//         alert("Sélectionnez une quantité");
-//         return
-//     }
-//     let panier = [id, color, quantity];
-//     panier = panier.join('|');
-
-
-//     if (localStorage.getItem('panier')) {
-//         let tabMulti = localStorage.getItem('panier').split('%');
-//         if (tabMulti.length == 1) {
-//             let tabCommande = tabMulti[0].split('|');
-//             if (tabCommande[0] == id) {
-//                 if (tabCommande[1] == color) {
-//                     tabCommande[2] = parseInt(tabCommande[2]);
-//                     console.log(tabCommande[2]);
-//                     tabCommande[2] += quantity;
-//                     localStorage.setItem('panier', tabCommande.join('|'));
-//                     return
-//                 }
-//             }
-//         }
-//         let commande = [];
-//         commande.push(localStorage.getItem('panier'));
-//         commande.push(panier);
-//         commande = commande.join('%');
-//         localStorage.setItem('panier', commande);
-//         return
-//     }
-//     localStorage.setItem('panier', panier);
-// }
-
 document.getElementById('addToCart').addEventListener('click', (e) => {
     e.preventDefault;
-    //ajoutPanier(e);
     ajoutPan();
 })
 
@@ -130,6 +90,7 @@ function ajoutPan() {
                 tabMulti[i] = item;
                 tabMulti = tabMulti.join('%');
                 localStorage.setItem('panier', tabMulti);
+                compterArticles();
                 return
             }
         }
@@ -137,10 +98,39 @@ function ajoutPan() {
         tabMulti.push(JSON.stringify(panier));
         tabMulti = tabMulti.join('%');
         localStorage.setItem('panier', tabMulti);
+        compterArticles();
 
         return
     }
 
     //On initie le locale storage "panier" avec le premier objet stringifié
     localStorage.setItem('panier', JSON.stringify(panier));
+    compterArticles();
+}
+
+function compterArticles() {
+    if (!localStorage.getItem('panier')) {
+        if (localStorage.getItem('quantite')) {
+            localStorage.clear('quantite');
+        }
+        return
+    }
+    //On récupère le tableau d'objets stringifiés à partir du local storage
+    let tabCanaps = localStorage.getItem('panier').split('%');
+    let quantiteArticles = 0;
+    for (item of tabCanaps) {
+        item = JSON.parse(item);
+        quantiteArticles += parseInt(item.quantity);
+    }
+    localStorage.setItem('quantite', quantiteArticles);
+    AfficherQuantitePanier();
+    return quantiteArticles
+}
+
+function AfficherQuantitePanier() {
+    if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
+        let quantite = parseInt(localStorage.getItem('quantite'));
+        let panNav = document.querySelector('nav > ul > a:last-child > li');
+        panNav.innerText = `Panier (${quantite})`;
+    }
 }
