@@ -1,6 +1,7 @@
 let tabMulti = [];
 let total = 0;
 let quant = 0;
+let quantiteGlobale = 0;
 if (localStorage.getItem('panier')) {
     //On récupère le tableau d'objets stringifiés à partir du local storage
     tabMulti = localStorage.getItem('panier').split('%');
@@ -38,6 +39,7 @@ function erreurChargement(erreur) {
 function afficherPanier(obj, item) {
     total += parseInt(obj.price) * parseInt(item.quantity);
     quant += parseInt(item.quantity);
+    quantiteGlobale = quant;
     //console.log(total);
     const canap = document.createElement('article');
     canap.classList.add('cart__item');
@@ -71,16 +73,28 @@ function afficherPanier(obj, item) {
 }
 
 function quantiteDynamique(item, obj) {
+    let offset = 0;
     const modifQuant = document.getElementById(`quant-${item.id + item.color}`);
+    modifQuant.addEventListener('mouseenter', () => {
+        if (quant != quantiteGlobale) {
+            quant = quantiteGlobale;
+            console.log(offset);
+            //offset = 0;
+            return
+        }
+    })
     modifQuant.addEventListener('input', (e) => {
         let nouvelleQuantite = e.target.value;
-        let offset = parseInt(nouvelleQuantite) - parseInt(item.quantity);
+        offset = parseInt(nouvelleQuantite) - parseInt(item.quantity);
         let nouveauPrix = offset * parseInt(obj.price);
         console.log(offset);
-        //quant = parseInt(quant) + offset;
+        quantiteGlobale = parseInt(quant) + offset;
+        console.log(quant);
+        console.log(quantiteGlobale);
 
         totalPrice.innerText = parseInt(total) + nouveauPrix;
-        totalQuantity.innerText = parseInt(quant) + offset;
+        totalQuantity.innerText = quantiteGlobale;
+        //item.quantity = nouvelleQuantite;
         //console.log(offset);
         tabMulti = localStorage.getItem('panier').split('%');
         //console.log(tabMulti + '=tabMulti');
