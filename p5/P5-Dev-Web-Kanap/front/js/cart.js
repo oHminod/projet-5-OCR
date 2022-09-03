@@ -170,12 +170,7 @@ function AfficherQuantitePanier() {
 function sendOrder () {
 
 }
-let prenomOk, nomOk, adresseOk, villeOk, emailOk, contact, preno, nomdef, addr, vil, emai;
-prenomOk = false;
-nomOk = false;
-adresseOk = false;
-villeOk = false;
-emailOk = false;
+let prenomOk, nomOk, adresseOk, villeOk, emailOk, contact;
 contact = {
     firstName: "",
     lastName: "",
@@ -190,35 +185,35 @@ function listenForm() {
         let prenom = e.target.value;
         verifNom(prenom) ? firstNameErrorMsg.innerText = '' : firstNameErrorMsg.innerText = "Le champ prénom doit contenir seulement des lettres. (espace, tiret et apostrophe seulement entre deux mots, pas plus d'un espace consécutif)";
         verifNom(prenom) ? prenomOk = true : prenomOk = false;
-        preno = prenom;
+        contact.firstName = prenom;
         if (prenom == '') {firstNameErrorMsg.innerText = ''}
     })
     lastName.addEventListener('input', (e) => {
         let nom = e.target.value;
         verifNom(nom) ? lastNameErrorMsg.innerText = '' : lastNameErrorMsg.innerText = "Le champ nom doit contenir seulement des lettres. (espace, tiret et apostrophe seulement entre deux mots, pas plus d'un espace consécutif)";
         verifNom(nom) ? nomOk = true : nomOk = false;
-        nomdef = nom;
+        contact.lastName = nom;
         if (nom == '') {lastNameErrorMsg.innerText = ''}
     })
     address.addEventListener('input', (e) => {
         let adresse = e.target.value;
         verifAdresse(adresse) ? addressErrorMsg.innerText = '' : addressErrorMsg.innerText = "Entrer une adresse valide, terminer par le code postal.";
         verifAdresse(adresse) ? adresseOk = true : adresseOk = false;
-        addr = adresse;
+        contact.address = adresse;
         if (adresse == '') {addressErrorMsg.innerText = ''}
     })
     city.addEventListener('input', (e) => {
         let ville = e.target.value;
         verifVille(ville) ? cityErrorMsg.innerText = '' : cityErrorMsg.innerText = "Entrer un nom de ville valide. (espace, tiret et apostrophe seulement entre deux mots, pas plus d'un espace consécutif)";
         verifVille(ville) ? villeOk = true : villeOk = false;
-        vil = ville;
+        contact.city = ville;
         if (ville == '') {cityErrorMsg.innerText = ''}
     })
     email.addEventListener('input', (e) => {
         let mail = e.target.value;
         verifEmail(mail) ? emailErrorMsg.innerText = '' : emailErrorMsg.innerText = "Entrer une adresse email valide.";
         verifEmail(mail) ? emailOk = true : emailOk = false;
-        emai = mail;
+        contact.email = mail;
         if (mail == '') {emailErrorMsg.innerText = ''}
     })
 }
@@ -230,7 +225,6 @@ function verifNom(string) {
 function verifAdresse(string) {
     //let re = /([0-9a-zA-Z,\. ]*) ?(\b[0-9]{5}\b)$/;
     let re = /^[0-9,a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)* ?(\b[0-9]{5}\b)$/;
-
     return re.test(string);
 }
 function verifVille(string) {
@@ -248,17 +242,11 @@ document.querySelector('.cart__order__form').addEventListener("submit", (e) => {
 document.getElementById('order').addEventListener('click', (e) => {
     e.preventDefault;
     submit();
-    console.log('envois !');
 })
 
 function submit() {
     panierOrder = localStorage.getItem('panier');
     if (panierOrder && prenomOk && nomOk && adresseOk && villeOk && emailOk) {
-        contact.firstName = preno;
-        contact.lastName = nomdef;
-        contact.address = addr;
-        contact.city = vil;
-        contact.email = emai;
 
         let products = [];
         panierOrder = panierOrder.split('%');
@@ -285,10 +273,14 @@ async function post(commande) {
     });
       
     let result = await response.json();
-    // if code de retour OK...
-    let fin = window.location.href.indexOf("html/") + 5;
-    let confirmation = window.location.href.slice(0, fin) + `confirmation.html?id=${result.orderId}`;
-
-    localStorage.clear();
-    document.location.href = confirmation;
+    
+    if (result.orderId) {
+        let fin = window.location.href.indexOf("html/") + 5;
+        let confirmation = window.location.href.slice(0, fin) + `confirmation.html?id=${result.orderId}`;
+    
+        localStorage.clear();
+        document.location.href = confirmation;
+    }else{
+        alert(`Il y a un problème avec le serveur, envoyer ce message à un administrateur :\n ${result}`)
+    }
 }
