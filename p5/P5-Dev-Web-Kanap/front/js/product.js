@@ -32,8 +32,10 @@ function afficherCanap(obj) {
         alert("numéro de produit invalide !");
         document.location.href = racine; 
     }
-    document.querySelector(".item__img").children[0].src = obj.imageUrl;
-    document.querySelector(".item__img").children[0].alt = obj.altTxt;
+    const img = document.createElement('img');
+    img.src = obj.imageUrl;
+    img.alt = obj.altTxt;
+    document.querySelector(".item__img").appendChild(img);
     title.innerText = obj.name;
     price.innerText = obj.price;
     description.innerText = obj.description;
