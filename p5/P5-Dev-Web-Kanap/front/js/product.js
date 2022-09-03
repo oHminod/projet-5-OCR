@@ -9,6 +9,8 @@ let fin = window.location.href.indexOf("html/") + 5;
 var racine = window.location.href.slice(0, fin) + "index.html";
 var racineP = window.location.href.slice(0, fin) + "product.html";
 
+
+
 canap();
 /**
  * * canap
@@ -26,11 +28,13 @@ async function canap() {
     }
 }
 
+
+
 /**
  * * erreurChargement
  * Fonction affichant l'erreur de la 
  * fonction canap si elle existe
- * @param  {} erreur
+ * @param  {json} erreur
  */
 function erreurChargement(erreur) {
     console.log(erreur);
@@ -43,7 +47,7 @@ function erreurChargement(erreur) {
  * * afficherCanap
  * Fonction d'affichage du résultat de la requête
  * effectuée dans la fonction canap
- * @param  {} obj : objets json du produit
+ * @param  {json} obj : objets json du produit
  */
 function afficherCanap(obj) {
     AfficherQuantitePanier();
@@ -102,12 +106,10 @@ function ajoutPan() {
         "color": color,
         "quantity": quantity
     };
-
     //Si un panier existe dans le locale storage
     if (localStorage.getItem('panier')) {
         //On récupère le tableau d'objets stringifiés à partir du local storage
         let tabMulti = localStorage.getItem('panier').split('%');
-
         for (const i in tabMulti) {
             //Pour chaque item du tableau, on transforme l'item en objet
             let item = JSON.parse(tabMulti[i]);
@@ -130,10 +132,8 @@ function ajoutPan() {
         tabMulti = tabMulti.join('%');
         localStorage.setItem('panier', tabMulti);
         compterArticles();
-
         return
     }
-
     //On initie le locale storage "panier" avec le premier objet stringifié
     localStorage.setItem('panier', JSON.stringify(panier));
     compterArticles();

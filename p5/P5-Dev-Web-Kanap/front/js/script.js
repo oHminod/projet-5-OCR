@@ -15,11 +15,14 @@ async function canaps() {
 }
 
 canaps();
+
+
+
 /**
  * * erreurChargement
  * Fonction affichant l'erreur de la 
  * fonction canaps si elle existe
- * @param  {} erreur
+ * @param  {json} erreur
  */
 function erreurChargement(erreur) {
     const err = document.createElement("h2");
@@ -27,10 +30,13 @@ function erreurChargement(erreur) {
     items.appendChild(err);
     dump(erreur);
 }
+
+
+
 /**
  * * dump
  * Fonction pour mettre en forme un message d'erreur
- * @param  {} obj
+ * @param  {any} obj
  */
 function dump(obj) {
     var out = '';
@@ -43,11 +49,13 @@ function dump(obj) {
     items.appendChild(pre)
 }
 
+
+
 /**
  * * afficherCanaps
  * Fonction d'affichage du résultat de la requête 
  * effectuée dans la fonction canaps
- * @param  {} tabObj : tableau d'objets json
+ * @param  {json} tabObj : tableau d'objets json
  */
 function afficherCanaps(tabObj) {
     AfficherQuantitePanier();
@@ -77,6 +85,9 @@ function afficherCanaps(tabObj) {
         items.appendChild(canap);
     }
 }
+
+
+
 /**
  * * AfficherQuantitePanier
  * Fonction qui affiche le nombre d'articles du panier

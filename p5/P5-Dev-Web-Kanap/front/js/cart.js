@@ -2,6 +2,8 @@ let tabMulti = [];
 let total = 0;
 let quant = 0;
 
+
+
 debut();
 listenForm();
 /**
@@ -18,11 +20,14 @@ function debut() {
         return
     }
 }
+
+
+
 /**
  * * trouverPanier
  * Fonction asynchrone qui appelle la fonction canap
  * avec chaque item du panier
- * @param  {} tab tableau d'objets json en format string
+ * @param  {array} tab tableau d'objets json en format string
  */
 async function trouverPanier(tab) {
     for (const i in tab) {
@@ -33,12 +38,14 @@ async function trouverPanier(tab) {
     AfficherQuantitePanier();
 }
 
+
+
 /**
  * *canape
  * Fonction asynchrone qui récupère les données manquante de chaque objet
  * et appelle la fonction afficherPanier avec le résultat et l'item
  * ou le fonction erreurChargement avec l'erreur le cas échéant
- * @param  {} item item du panier (id, couleur, quantité)
+ * @param  {json} item item du panier (id, couleur, quantité)
  */
 async function canape(item) {
     try {
@@ -49,20 +56,26 @@ async function canape(item) {
         erreurChargement(erreur);
     }
 }
+
+
+
 /**
  * * erreurChargement
  * Fonction qui affiche l'erreur de la fonction canape
- * @param  {} erreur
+ * @param  {json} erreur
  */
 function erreurChargement(erreur) {
     console.log(erreur);
     cart__items.innerText = "Il y a eu un problème lors du chargement du panier !";
 }
+
+
+
 /**
  * * afficherPanier
  * Fonction qui affiche un item du panier
- * @param  {} obj : objet canape de l'API correspondant à l'item du panier
- * @param  {} item : item du panier avec la quantité et la couleur
+ * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
+ * @param  {json} item : item du panier avec la quantité et la couleur
  */
 function afficherPanier(obj, item) {
     total += parseInt(obj.price) * parseInt(item.quantity);
@@ -97,14 +110,17 @@ function afficherPanier(obj, item) {
     quantiteDynamique(item, obj, ancienneQuantite);
     supprimerItem(item, obj);
 }
+
+
+
 /**
  * * quantiteDynamique
  * Fonction permettant de mettre à jour les quantités et le prix total 
  * au niveau de l'affichage et du locale storage quand on fait 
  * des modifications dans la page panier
- * @param  {} item : item du panier avec la quantité et la couleur
- * @param  {} obj : objet canape de l'API correspondant à l'item du panier
- * @param  {} ancienneQuantite : quantité avant modification
+ * @param  {json} item : item du panier avec la quantité et la couleur
+ * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
+ * @param  {int} ancienneQuantite : quantité avant modification
  */
 function quantiteDynamique(item, obj, ancienneQuantite) {
     const modifQuant = document.getElementById(`quant-${item.id + item.color}`);
@@ -131,12 +147,15 @@ function quantiteDynamique(item, obj, ancienneQuantite) {
 
     })
 }
+
+
+
 /**
  * * supprimerItem
  * Fonction permettant de supprimer un item du panier
  * en mettant à jour les quantités et le prix total
- * @param  {} item : item du panier avec la quantité et la couleur
- * @param  {} obj : objet canape de l'API correspondant à l'item du panier
+ * @param  {json} item : item du panier avec la quantité et la couleur
+ * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
  */
 function supprimerItem(item, obj) {
     const deleteItem = document.getElementById(`delete-${item.id + item.color}`);
@@ -164,17 +183,23 @@ function supprimerItem(item, obj) {
         }
     })
 }
+
+
+
 /**
  * * afficherTotal
  * Fonction pour afficher le prix et la quantité totale 
  * au chargement de la page
- * @param  {} total : prix total
- * @param  {} quant : quantité totale
+ * @param  {int} total : prix total
+ * @param  {int} quant : quantité totale
  */
 function afficherTotal(total, quant) {
     totalPrice.innerText = total;
     totalQuantity.innerText = quant;
 }
+
+
+
 /**
  * * compterArticles
  * Fonction qui compte le nombre d'articles dans le panier
@@ -200,15 +225,21 @@ function compterArticles() {
     AfficherQuantitePanier();
     return quantiteArticles
 }
+
+
+
 /**
  * * prixTotal
  * Fonction pour modifier le prix total
- * @param  {} number nombre à ajouter au total
+ * @param  {int} number nombre à ajouter au total
  */
 function prixTotal(number) {
     total += parseInt(number);
     return
 }
+
+
+
 /**
  * * AfficherQuantitePanier
  * Fonction qui affiche le nombre d'articles du panier
@@ -224,6 +255,9 @@ function AfficherQuantitePanier() {
     let panNav = document.querySelector('nav > ul > a:last-child > li');
         panNav.innerText = `Panier`;
 }
+
+
+
 /**
  * Initialisation des variables utiles à la validation du formulaire
  */
@@ -235,6 +269,9 @@ contact = {
     city: "",
     email: ""
 };
+
+
+
 /**
  * * listenForm
  * Fonction d'écoute des entrées du formulaire
@@ -276,6 +313,9 @@ function listenForm() {
         if (mail == '') {emailErrorMsg.innerText = ''}
     })
 }
+
+
+
 /**
  * * verifNom
  * Fonction pour vérifier le nom et le prénom
@@ -286,6 +326,9 @@ function verifNom(string) {
 	let re = /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/;
     return re.test(string);
 }
+
+
+
 /**
  * * verifAdresse
  * Fonction pour vérifier l'adresse
@@ -297,6 +340,9 @@ function verifAdresse(string) {
     let re = /^[0-9,a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)* ?(\b[0-9]{5}\b)$/;
     return re.test(string);
 }
+
+
+
 /**
  * * verifVille
  * Fonction pour vérifier le nom de la ville
@@ -307,6 +353,9 @@ function verifVille(string) {
     let re = /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F0-9]+)*$/;
 	return re.test(string);
 }
+
+
+
 /**
  * * verifEmail
  * Fonction pour vérifier l'email
@@ -318,6 +367,8 @@ function verifEmail(string) {
     return re.test(string);
 }
 
+
+
 //ne pas utiliser le comportement par défaut du formulaire
 document.querySelector('.cart__order__form').addEventListener("submit", (e) => {
     e.preventDefault();
@@ -327,6 +378,9 @@ document.getElementById('order').addEventListener('click', (e) => {
     e.preventDefault;
     submit();
 })
+
+
+
 /**
  * * submit
  * Fonction pour mettre en forme les données du formulaire
@@ -350,6 +404,9 @@ function submit() {
         alert('Remplir correctement tous les champs et vérifier que le panier n\'est pas vide');
     }
 }
+
+
+
 /**
  * * post
  * Fonction asynchrone qui envois une requête à l'api
