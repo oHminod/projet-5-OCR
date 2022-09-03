@@ -1,3 +1,4 @@
+//Affiche l'orderId
 let url = window.location.href;
 let id;
 url = new URL(url);

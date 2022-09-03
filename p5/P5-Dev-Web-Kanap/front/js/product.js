@@ -1,15 +1,21 @@
+//Récupération de l'id produit
 let url = window.location.href;
 let id;
 url = new URL(url);
 let search_params = new URLSearchParams(url.search);
 search_params.has('id') ? id = search_params.get('id') : alert("Pas d'id produit");
-
+//Variables pour les redirections
 let fin = window.location.href.indexOf("html/") + 5;
 var racine = window.location.href.slice(0, fin) + "index.html";
 var racineP = window.location.href.slice(0, fin) + "product.html";
 
 canap();
-
+/**
+ * * canap
+ * Fonction asynchrone appelant 
+ * une fonction avec le json du produit
+ * une fonction avec l'erreur.
+ */
 async function canap() {
     try {
         const reponse = await fetch(`http://localhost:3000/api/products/${id}`);
@@ -20,12 +26,25 @@ async function canap() {
     }
 }
 
-
+/**
+ * * erreurChargement
+ * Fonction affichant l'erreur de la 
+ * fonction canap si elle existe
+ * @param  {} erreur
+ */
 function erreurChargement(erreur) {
     console.log(erreur);
     title.innerText = "Il y a eu un problème lors du chargement du canapé !";
 }
 
+
+
+/**
+ * * afficherCanap
+ * Fonction d'affichage du résultat de la requête
+ * effectuée dans la fonction canap
+ * @param  {} obj : objets json du produit
+ */
 function afficherCanap(obj) {
     AfficherQuantitePanier();
     if (!obj.name) {
@@ -39,15 +58,21 @@ function afficherCanap(obj) {
     title.innerText = obj.name;
     price.innerText = obj.price;
     description.innerText = obj.description;
-    for (const i in obj.colors) {
+    for (let couleur of obj.colors) {
         const option = document.createElement("option");
-        option.value = obj.colors[i];
-        option.innerText = obj.colors[i];
+        option.value = couleur;
+        option.innerText = couleur;
 
         colors.appendChild(option);
     }
 }
 
+
+
+/**
+ * EventListener qui ajoute la sélection au panier
+ * quand on clic sur le bouton "ajouter au panier"
+ */
 document.getElementById('addToCart').addEventListener('click', (e) => {
     e.preventDefault;
     ajoutPan();
@@ -55,7 +80,11 @@ document.getElementById('addToCart').addEventListener('click', (e) => {
 
 
 
-
+/**
+ * * ajoutPan
+ * Fonction qui ajoute la sélection au panier
+ * en prenant garde de ne pas dupliquer les items
+ */
 function ajoutPan() {
     //On récupère les données du formulaire et on fabrique un json dans la variable "panier"
     let color = colors.options[colors.selectedIndex].text;
@@ -110,6 +139,14 @@ function ajoutPan() {
     compterArticles();
 }
 
+
+
+/**
+ * * compterArticles
+ * Fonction qui compte le nombre total d'articles dans le panier
+ * stocke le résultat dans le local storage
+ * @returns le nombre d'articles dans le panier
+ */
 function compterArticles() {
     if (!localStorage.getItem('panier')) {
         if (localStorage.getItem('quantite')) {
@@ -129,6 +166,13 @@ function compterArticles() {
     return quantiteArticles
 }
 
+
+
+/**
+ * * AfficherQuantitePanier
+ * Fonction qui affiche le nombre d'articles du panier
+ * au niveau du lien vers le panier dans la barre de navigation
+ */
 function AfficherQuantitePanier() {
     if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
         let quantite = parseInt(localStorage.getItem('quantite'));

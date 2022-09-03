@@ -1,8 +1,8 @@
 /**
  * * canaps
- * Fonction asynchrone renvoyant 
- * le json du catalogue de produits
- * ou une erreur.
+ * Fonction asynchrone appelant 
+ * une fonction avec le json du catalogue
+ * une fonction avec l'erreur.
  */
 async function canaps() {
     try {
@@ -47,7 +47,7 @@ function dump(obj) {
  * * afficherCanaps
  * Fonction d'affichage du résultat de la requête 
  * effectuée dans la fonction canaps
- * @param  {} tabObj : tableau d'objets json en format string
+ * @param  {} tabObj : tableau d'objets json
  */
 function afficherCanaps(tabObj) {
     AfficherQuantitePanier();
