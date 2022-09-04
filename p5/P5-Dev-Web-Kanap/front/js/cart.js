@@ -126,6 +126,9 @@ function quantiteDynamique(item, obj, ancienneQuantite) {
     const modifQuant = document.getElementById(`quant-${item.id + item.color}`);
     modifQuant.addEventListener('input', (e) => {
         let nouvelleQuantite = parseInt(e.target.value);
+        if (nouvelleQuantite < 0) {
+            nouvelleQuantite = 0;
+        }
         let offsetQuantite = nouvelleQuantite - ancienneQuantite;
         ancienneQuantite = nouvelleQuantite;
         let offsetPrix = parseInt(obj.price) * offsetQuantite;
