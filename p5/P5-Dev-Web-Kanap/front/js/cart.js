@@ -390,8 +390,9 @@ document.getElementById('order').addEventListener('click', (e) => {
  * avant de les envoyer à la fonction post()
  */
 function submit() {
-    panierOrder = localStorage.getItem('panier');
-    if (panierOrder && prenomOk && nomOk && adresseOk && villeOk && emailOk) {
+    let panierOrder = localStorage.getItem('panier');
+    let quantite = localStorage.getItem('quantite');
+    if (panierOrder && prenomOk && nomOk && adresseOk && villeOk && emailOk && quantite > 0) {
 
         let products = [];
         panierOrder = panierOrder.split('%');
