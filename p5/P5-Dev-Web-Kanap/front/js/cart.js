@@ -134,15 +134,17 @@ function quantiteDynamique(item, obj, ancienneQuantite) {
         }
         let offsetQuantite = nouvelleQuantite - ancienneQuantite;
         ancienneQuantite = nouvelleQuantite;
+        quant += offsetQuantite;
         let offsetPrix = parseInt(obj.price) * offsetQuantite;
-        total += parseInt(offsetPrix);
+        total += offsetPrix;
         totalPrice.innerText = total;
+        totalQuantity.innerText = quant;
+        AfficherQuantitePanier(quant);
         for (let cetItem of tabMulti) {
             if (cetItem.id == item.id && cetItem.color == item.color) {
                 cetItem.quantity = nouvelleQuantite;
                 let tabMult = JSON.stringify(tabMulti);
                 localStorage.setItem('panier', tabMult);
-                totalQuantity.innerText = compterArticles();
                 return
             }
         }
@@ -198,8 +200,6 @@ function compterArticles() {
     if (!localStorage.getItem('panier') && localStorage.getItem('quantite')) {
         localStorage.clear('quantite');
         AfficherQuantitePanier(quantiteArticles);
-        totalQuantity.innerText = '0';
-        totalPrice.innerText = '0';
         return quantiteArticles
     }
     let tabCanaps = JSON.parse(localStorage.getItem('panier'));
@@ -212,7 +212,6 @@ function compterArticles() {
         return quantiteArticles
     }else{
         localStorage.clear('quantite');
-        document.querySelector('h1').innerText = "Votre panier est vide";
         AfficherQuantitePanier(quantiteArticles);
         return quantiteArticles
     }
@@ -238,7 +237,10 @@ function AfficherQuantitePanier(number) {
         return
     }
     let panNav = document.querySelector('nav > ul > a:last-child > li');
-        panNav.innerText = `Panier`;
+    panNav.innerText = `Panier`;
+    totalQuantity.innerText = '0';
+    totalPrice.innerText = '0';
+    document.querySelector('h1').innerText = "Votre panier est vide";
 }
 
 
