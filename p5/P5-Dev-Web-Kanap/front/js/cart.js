@@ -178,11 +178,11 @@ function supprimerItem(item, obj) {
                 }else{
                     localStorage.clear('panier');
                 }
-                compterArticles();
-                if (!localStorage.getItem('quantite')) {
-                    totalQuantity.innerText = '0';
-                    document.querySelector('h1').innerText = "Votre panier est vide";
-                }
+                totalQuantity.innerText = compterArticles();
+                // if (!localStorage.getItem('quantite')) {
+                //     totalQuantity.innerText = '0';
+                //     document.querySelector('h1').innerText = "Votre panier est vide";
+                // }
                 return
             }
         }
@@ -211,21 +211,27 @@ function afficherTotal(total, quant) {
  * @returns le nombre d'articles dans le panier
  */
 function compterArticles() {
+    let quantiteArticles = 0;
     if (!localStorage.getItem('panier') && localStorage.getItem('quantite')) {
         localStorage.clear('quantite');
-        AfficherQuantitePanier();
+        AfficherQuantitePanier(quantiteArticles);
         totalQuantity.innerText = '0';
         totalPrice.innerText = '0';
         return
     }
     let tabCanaps = JSON.parse(localStorage.getItem('panier'));
-    let quantiteArticles = 0;
-    for (item of tabCanaps) {
-        quantiteArticles += parseInt(item.quantity);
+    if (tabCanaps) {
+        for (item of tabCanaps) {
+            quantiteArticles += parseInt(item.quantity);
+        }
+        localStorage.setItem('quantite', quantiteArticles);
+        AfficherQuantitePanier(quantiteArticles);
+        return quantiteArticles
+    }else{
+        localStorage.clear('quantite');
+        AfficherQuantitePanier(quantiteArticles);
+        return quantiteArticles
     }
-    localStorage.setItem('quantite', quantiteArticles);
-    AfficherQuantitePanier();
-    return quantiteArticles
 }
 
 
@@ -247,7 +253,12 @@ function prixTotal(number) {
  * Fonction qui affiche le nombre d'articles du panier
  * au niveau du lien vers le panier dans la barre de navigation
  */
-function AfficherQuantitePanier() {
+function AfficherQuantitePanier(number) {
+    if (number && number > 0) {
+        let panNav = document.querySelector('nav > ul > a:last-child > li');
+        panNav.innerText = `Panier (${number})`;
+        return
+    }
     if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
         let quantite = parseInt(localStorage.getItem('quantite'));
         let panNav = document.querySelector('nav > ul > a:last-child > li');
