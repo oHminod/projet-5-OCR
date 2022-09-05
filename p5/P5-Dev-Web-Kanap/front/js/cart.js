@@ -165,7 +165,6 @@ function supprimerItem(item, obj) {
 
         let prix = parseInt(obj.price) * parseInt(count.value);
         total = parseInt(total) - prix;
-        tabMulti = localStorage.getItem('panier').split('%');
         totalPrice.innerText = total;
         for (let i in tabMulti) {
             let cetItem = tabMulti[i];
@@ -179,7 +178,7 @@ function supprimerItem(item, obj) {
                 }else{
                     localStorage.clear('panier');
                 }
-                totalQuantity.innerText = compterArticles();
+                compterArticles();
                 if (!localStorage.getItem('quantite')) {
                     totalQuantity.innerText = '0';
                     document.querySelector('h1').innerText = "Votre panier est vide";
@@ -212,19 +211,16 @@ function afficherTotal(total, quant) {
  * @returns le nombre d'articles dans le panier
  */
 function compterArticles() {
-    if (!localStorage.getItem('panier')) {
-        if (localStorage.getItem('quantite')) {
-            localStorage.clear('quantite');
-            AfficherQuantitePanier();
-            totalQuantity.innerText = '0';
-            totalPrice.innerText = '0';
-        }
+    if (!localStorage.getItem('panier') && localStorage.getItem('quantite')) {
+        localStorage.clear('quantite');
+        AfficherQuantitePanier();
+        totalQuantity.innerText = '0';
+        totalPrice.innerText = '0';
         return
     }
-    let tabCanaps = localStorage.getItem('panier').split('%');
+    let tabCanaps = JSON.parse(localStorage.getItem('panier'));
     let quantiteArticles = 0;
     for (item of tabCanaps) {
-        item = JSON.parse(item);
         quantiteArticles += parseInt(item.quantity);
     }
     localStorage.setItem('quantite', quantiteArticles);
