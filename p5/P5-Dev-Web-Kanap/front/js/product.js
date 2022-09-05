@@ -106,36 +106,32 @@ function ajoutPan() {
         "color": color,
         "quantity": quantity
     };
+    let tabMulti = [];
     //Si un panier existe dans le locale storage
     if (localStorage.getItem('panier')) {
         //On récupère le tableau d'objets stringifiés à partir du local storage
-        let tabMulti = localStorage.getItem('panier').split('%');
-        for (const i in tabMulti) {
-            //Pour chaque item du tableau, on transforme l'item en objet
-            let item = JSON.parse(tabMulti[i]);
-
+        tabMulti = JSON.parse(localStorage.getItem('panier'));
+        for (const item of tabMulti) {
             //Si l'id et la couleur de l'item correspondent à l'objet qu'on veut ajouter
             if (item.id == panier.id && item.color == panier.color) {
                 //on ajoute la quantité en prenant garde de manipuler des nombres
                 item.quantity += parseInt(panier.quantity);
-                item = JSON.stringify(item);
-                //on change la valeur de l'item dans le tableau et on redéfinit le locale storage "panier"
-                tabMulti[i] = item;
-                tabMulti = tabMulti.join('%');
+                tabMulti = JSON.stringify(tabMulti);
                 localStorage.setItem('panier', tabMulti);
                 compterArticles();
                 return
             }
         }
         //On ajoute le panier au tableau d'objets stringifiés, lui-même joint pour faire une string qu'on définit comme valeur du locale storage "panier"
-        tabMulti.push(JSON.stringify(panier));
-        tabMulti = tabMulti.join('%');
+        tabMulti.push(panier);
+        tabMulti = JSON.stringify(tabMulti);
         localStorage.setItem('panier', tabMulti);
         compterArticles();
         return
     }
     //On initie le locale storage "panier" avec le premier objet stringifié
-    localStorage.setItem('panier', JSON.stringify(panier));
+    tabMulti.push(panier);
+    localStorage.setItem('panier', JSON.stringify(tabMulti));
     compterArticles();
 }
 
@@ -147,18 +143,15 @@ function ajoutPan() {
  * stocke le résultat dans le local storage
  * @returns le nombre d'articles dans le panier
  */
-function compterArticles() {
-    if (!localStorage.getItem('panier')) {
-        if (localStorage.getItem('quantite')) {
-            localStorage.clear('quantite');
-        }
+ function compterArticles() {
+    if (!localStorage.getItem('panier') && localStorage.getItem('quantite')) {
+        localStorage.clear('quantite');
         return
     }
     //On récupère le tableau d'objets stringifiés à partir du local storage
-    let tabCanaps = localStorage.getItem('panier').split('%');
+    let tabCanaps = JSON.parse(localStorage.getItem('panier'));
     let quantiteArticles = 0;
     for (item of tabCanaps) {
-        item = JSON.parse(item);
         quantiteArticles += parseInt(item.quantity);
     }
     localStorage.setItem('quantite', quantiteArticles);
