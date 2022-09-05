@@ -437,6 +437,7 @@ async function post(commande) {
         localStorage.clear();
         document.location.href = confirmation;
     }else{
-        alert(`Il y a un problème avec le serveur, envoyer ce message à un administrateur :\n ${result}`)
+        result = dump(result);
+        alert(`Il y a un problème avec le serveur, contacter un administrateur.`)
     }
 }
