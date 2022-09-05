@@ -36,8 +36,9 @@ function debut() {
         await canape(item);
     })
     await Promise.all(promesseTab);
-    afficherTotal(total, quant);
-    AfficherQuantitePanier();
+    totalPrice.innerText = total;
+    totalQuantity.innerText = quant;
+    AfficherQuantitePanier(quant);
 }
 
 
@@ -134,7 +135,7 @@ function quantiteDynamique(item, obj, ancienneQuantite) {
         let offsetQuantite = nouvelleQuantite - ancienneQuantite;
         ancienneQuantite = nouvelleQuantite;
         let offsetPrix = parseInt(obj.price) * offsetQuantite;
-        prixTotal(offsetPrix);
+        total += parseInt(offsetPrix);
         totalPrice.innerText = total;
         for (let cetItem of tabMulti) {
             if (cetItem.id == item.id && cetItem.color == item.color) {
@@ -179,28 +180,10 @@ function supprimerItem(item, obj) {
                     localStorage.clear('panier');
                 }
                 totalQuantity.innerText = compterArticles();
-                // if (!localStorage.getItem('quantite')) {
-                //     totalQuantity.innerText = '0';
-                //     document.querySelector('h1').innerText = "Votre panier est vide";
-                // }
                 return
             }
         }
     })
-}
-
-
-
-/**
- * * afficherTotal
- * Fonction pour afficher le prix et la quantité totale 
- * au chargement de la page
- * @param  {int} total : prix total
- * @param  {int} quant : quantité totale
- */
-function afficherTotal(total, quant) {
-    totalPrice.innerText = total;
-    totalQuantity.innerText = quant;
 }
 
 
@@ -217,7 +200,7 @@ function compterArticles() {
         AfficherQuantitePanier(quantiteArticles);
         totalQuantity.innerText = '0';
         totalPrice.innerText = '0';
-        return
+        return quantiteArticles
     }
     let tabCanaps = JSON.parse(localStorage.getItem('panier'));
     if (tabCanaps) {
@@ -229,21 +212,10 @@ function compterArticles() {
         return quantiteArticles
     }else{
         localStorage.clear('quantite');
+        document.querySelector('h1').innerText = "Votre panier est vide";
         AfficherQuantitePanier(quantiteArticles);
         return quantiteArticles
     }
-}
-
-
-
-/**
- * * prixTotal
- * Fonction pour modifier le prix total
- * @param  {int} number nombre à ajouter au total
- */
-function prixTotal(number) {
-    total += parseInt(number);
-    return
 }
 
 
@@ -400,14 +372,13 @@ document.getElementById('order').addEventListener('click', (e) => {
  * avant de les envoyer à la fonction post()
  */
 function submit() {
-    let panierOrder = localStorage.getItem('panier');
+    let panierOrder = JSON.parse(localStorage.getItem('panier'));
     let quantite = localStorage.getItem('quantite');
     if (panierOrder && prenomOk && nomOk && adresseOk && villeOk && emailOk && quantite > 0) {
 
         let products = [];
-        panierOrder = panierOrder.split('%');
-        for (const canapID of panierOrder) {
-            products.push(JSON.parse(canapID).id);
+        for (const item of panierOrder) {
+            if(item.quantity > 0) {products.push(item.id)}
         }
         let commande = {
             contact: contact,
@@ -447,7 +418,6 @@ async function post(commande) {
         localStorage.clear();
         document.location.href = confirmation;
     }else{
-        result = dump(result);
         alert(`Il y a un problème avec le serveur, contacter un administrateur.`)
     }
 }
