@@ -13,10 +13,12 @@ listenForm();
  */
 function debut() {
     if (localStorage.getItem('panier')) {
-        tabMulti = localStorage.getItem('panier').split('%');
+        tabMulti = JSON.parse(localStorage.getItem('panier'));
         trouverPanier(tabMulti);
     }else{
         document.querySelector('h1').innerText = "Votre panier est vide";
+        totalQuantity.innerText = '0';
+        totalPrice.innerText = '0';
         return
     }
 }
@@ -26,14 +28,14 @@ function debut() {
 /**
  * * trouverPanier
  * Fonction asynchrone qui appelle la fonction canap
- * avec chaque item du panier
- * @param  {array} tab tableau d'objets json en format string
+ * avec chaque item du panier en parallèle
+ * @param  {array} tab tableau d'objets json
  */
-async function trouverPanier(tab) {
-    for (const i in tab) {
-        let item = JSON.parse(tab[i]);
+ async function trouverPanier(tab) {
+    const promesseTab = tab.map(async item => {
         await canape(item);
-    }
+    })
+    await Promise.all(promesseTab);
     afficherTotal(total, quant);
     AfficherQuantitePanier();
 }
@@ -134,15 +136,11 @@ function quantiteDynamique(item, obj, ancienneQuantite) {
         let offsetPrix = parseInt(obj.price) * offsetQuantite;
         prixTotal(offsetPrix);
         totalPrice.innerText = total;
-        tabMulti = localStorage.getItem('panier').split('%');
-        for (let i in tabMulti) {
-            let cetItem = JSON.parse(tabMulti[i]);
+        for (let cetItem of tabMulti) {
             if (cetItem.id == item.id && cetItem.color == item.color) {
                 cetItem.quantity = nouvelleQuantite;
-                cetItem = JSON.stringify(cetItem);
-                tabMulti[i] = cetItem;
-                tabMulti = tabMulti.join('%');
-                localStorage.setItem('panier', tabMulti);
+                let tabMult = JSON.stringify(tabMulti);
+                localStorage.setItem('panier', tabMult);
                 totalQuantity.innerText = compterArticles();
                 return
             }
@@ -170,16 +168,21 @@ function supprimerItem(item, obj) {
         tabMulti = localStorage.getItem('panier').split('%');
         totalPrice.innerText = total;
         for (let i in tabMulti) {
-            let cetItem = JSON.parse(tabMulti[i]);
+            let cetItem = tabMulti[i];
             if (cetItem.id == item.id && cetItem.color == item.color) {
                 const card = document.getElementById(`id-${item.id + item.color}`);
                 card.remove();
                 tabMulti.splice(i, 1);
-                tabMulti = tabMulti.join('%');
-                localStorage.setItem('panier', tabMulti);
+                if (tabMulti.length > 0) {
+                    let tabMult = JSON.stringify(tabMulti);
+                    localStorage.setItem('panier', tabMult);
+                }else{
+                    localStorage.clear('panier');
+                }
                 totalQuantity.innerText = compterArticles();
                 if (!localStorage.getItem('quantite')) {
                     totalQuantity.innerText = '0';
+                    document.querySelector('h1').innerText = "Votre panier est vide";
                 }
                 return
             }
