@@ -148,7 +148,7 @@ function ajoutPan() {
         localStorage.clear('quantite');
         return
     }
-    //On récupère le tableau d'objets stringifiés à partir du local storage
+    //On récupère le tableau d'objets à partir du local storage
     let tabCanaps = JSON.parse(localStorage.getItem('panier'));
     let quantiteArticles = 0;
     for (item of tabCanaps) {

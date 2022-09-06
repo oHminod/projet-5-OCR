@@ -37,7 +37,6 @@ function debut() {
     })
     await Promise.all(promesseTab);
     totalPrice.innerText = total;
-    totalQuantity.innerText = quant;
     AfficherQuantitePanier(quant);
 }
 
@@ -54,8 +53,12 @@ async function canape(item) {
     try {
         const reponse = await fetch(`http://localhost:3000/api/products/${item.id}`);
         const resultat = await reponse.json();
-        afficherPanier(resultat, item);
-    } catch (erreur) {
+        afficherPanier(item, resultat);
+        quantiteDynamique(item, resultat);
+        supprimerItem(item, resultat);
+        total += parseInt(resultat.price) * parseInt(item.quantity);
+        quant += parseInt(item.quantity);
+        } catch (erreur) {
         erreurChargement(erreur);
     }
 }
@@ -80,38 +83,33 @@ function erreurChargement(erreur) {
  * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
  * @param  {json} item : item du panier avec la quantité et la couleur
  */
-function afficherPanier(obj, item) {
-    total += parseInt(obj.price) * parseInt(item.quantity);
-    quant += parseInt(item.quantity);
+function afficherPanier(item, obj) {
     const canap = document.createElement('article');
     canap.classList.add('cart__item');
     canap.setAttribute('data-id', item.id);
     canap.setAttribute('data-color', item.color);
     canap.id = 'id-' + item.id + item.color;
-    canap.innerHTML =
-    `<div class="cart__item__img">
-    <img src="${obj.imageUrl}" alt="${obj.altTxt}">
-  </div>
-  <div class="cart__item__content">
-    <div class="cart__item__content__description">
-      <h2>${obj.name}</h2>
-      <p>${item.color}</p>
-      <p>${obj.price} €</p>
+    canap.innerHTML = `
+    <div class="cart__item__img">
+        <img src="${obj.imageUrl}" alt="${obj.altTxt}">
     </div>
-    <div class="cart__item__content__settings">
-      <div class="cart__item__content__settings__quantity">
-        <p>Qté : </p>
-        <input type="number" class="itemQuantity" id="quant-${item.id + item.color}" name="itemQuantity" min="1" max="100" value="${item.quantity}">
-      </div>
-      <div class="cart__item__content__settings__delete">
-        <p class="deleteItem" id="delete-${item.id + item.color}">Supprimer</p>
-      </div>
-    </div>
-  </div>`;
+    <div class="cart__item__content">
+        <div class="cart__item__content__description">
+        <h2>${obj.name}</h2>
+        <p>${item.color}</p>
+        <p>${obj.price} €</p>
+        </div>
+        <div class="cart__item__content__settings">
+        <div class="cart__item__content__settings__quantity">
+            <p>Qté : </p>
+            <input type="number" class="itemQuantity" id="quant-${item.id + item.color}" name="itemQuantity" min="1" max="100" value="${item.quantity}">
+        </div>
+        <div class="cart__item__content__settings__delete">
+            <p class="deleteItem" id="delete-${item.id + item.color}">Supprimer</p>
+        </div>
+        </div>
+    </div>`;
     cart__items.appendChild(canap);
-    let ancienneQuantite = parseInt(item.quantity);
-    quantiteDynamique(item, obj, ancienneQuantite);
-    supprimerItem(item, obj);
 }
 
 
@@ -125,20 +123,21 @@ function afficherPanier(obj, item) {
  * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
  * @param  {int} ancienneQuantite : quantité avant modification
  */
-function quantiteDynamique(item, obj, ancienneQuantite) {
+function quantiteDynamique(item, obj) {
     const modifQuant = document.getElementById(`quant-${item.id + item.color}`);
     modifQuant.addEventListener('input', (e) => {
         let nouvelleQuantite = parseInt(e.target.value);
         if (nouvelleQuantite < 0) {
             nouvelleQuantite = 0;
         }
+        let ancienneQuantite = parseInt(item.quantity);
         let offsetQuantite = nouvelleQuantite - ancienneQuantite;
         ancienneQuantite = nouvelleQuantite;
         quant += offsetQuantite;
         let offsetPrix = parseInt(obj.price) * offsetQuantite;
         total += offsetPrix;
         totalPrice.innerText = total;
-        totalQuantity.innerText = quant;
+        localStorage.setItem('quantite', quant);
         AfficherQuantitePanier(quant);
         for (let cetItem of tabMulti) {
             if (cetItem.id == item.id && cetItem.color == item.color) {
@@ -167,8 +166,11 @@ function supprimerItem(item, obj) {
         let count = document.getElementById(`quant-${item.id + item.color}`);
 
         let prix = parseInt(obj.price) * parseInt(count.value);
-        total = parseInt(total) - prix;
+        quant -= parseInt(item.quantity);
+        total -= prix;
         totalPrice.innerText = total;
+        localStorage.setItem('quantite', quant);
+        AfficherQuantitePanier(quant);
         for (let i in tabMulti) {
             let cetItem = tabMulti[i];
             if (cetItem.id == item.id && cetItem.color == item.color) {
@@ -181,40 +183,10 @@ function supprimerItem(item, obj) {
                 }else{
                     localStorage.clear('panier');
                 }
-                totalQuantity.innerText = compterArticles();
                 return
             }
         }
     })
-}
-
-
-
-/**
- * * compterArticles
- * Fonction qui compte le nombre d'articles dans le panier
- * @returns le nombre d'articles dans le panier
- */
-function compterArticles() {
-    let quantiteArticles = 0;
-    if (!localStorage.getItem('panier') && localStorage.getItem('quantite')) {
-        localStorage.clear('quantite');
-        AfficherQuantitePanier(quantiteArticles);
-        return quantiteArticles
-    }
-    let tabCanaps = JSON.parse(localStorage.getItem('panier'));
-    if (tabCanaps) {
-        for (item of tabCanaps) {
-            quantiteArticles += parseInt(item.quantity);
-        }
-        localStorage.setItem('quantite', quantiteArticles);
-        AfficherQuantitePanier(quantiteArticles);
-        return quantiteArticles
-    }else{
-        localStorage.clear('quantite');
-        AfficherQuantitePanier(quantiteArticles);
-        return quantiteArticles
-    }
 }
 
 
@@ -228,6 +200,7 @@ function AfficherQuantitePanier(number) {
     if (number && number > 0) {
         let panNav = document.querySelector('nav > ul > a:last-child > li');
         panNav.innerText = `Panier (${number})`;
+        totalQuantity.innerText = number;
         return
     }
     if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
@@ -239,7 +212,6 @@ function AfficherQuantitePanier(number) {
     let panNav = document.querySelector('nav > ul > a:last-child > li');
     panNav.innerText = `Panier`;
     totalQuantity.innerText = '0';
-    totalPrice.innerText = '0';
     document.querySelector('h1').innerText = "Votre panier est vide";
 }
 
@@ -386,6 +358,13 @@ function submit() {
             contact: contact,
             products: products
         }
+        commande = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(commande)
+        }
         post(commande);
     }else{
         alert('Remplir correctement tous les champs et vérifier que le panier n\'est pas vide');
@@ -403,23 +382,18 @@ function submit() {
  * @param {json} commande 
  */
 async function post(commande) {
-    let response = await fetch('http://localhost:3000/api/products/order', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8'
-        },
-        body: JSON.stringify(commande)
-    });
-      
-    let result = await response.json();
-    
-    if (result.orderId) {
+    let response = await fetch('http://localhost:3000/api/products/order', commande)
+    .then((response) => {
+        if (response.status >= 400 && response.status < 600) {
+          throw new Error("Bad response from server");
+        }
+        return response.json()
+    }).then((result) => {
         let fin = window.location.href.indexOf("html/") + 5;
         let confirmation = window.location.href.slice(0, fin) + `confirmation.html?id=${result.orderId}`;
-    
         localStorage.clear();
         document.location.href = confirmation;
-    }else{
-        alert(`Il y a un problème avec le serveur, contacter un administrateur.`)
-    }
+    }).catch(function(error) {
+        alert(`Il y a un problème avec le serveur : \n${error}`);
+    });
 }
