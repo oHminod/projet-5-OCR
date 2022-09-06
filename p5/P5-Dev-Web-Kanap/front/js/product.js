@@ -21,6 +21,9 @@ canap();
 async function canap() {
     try {
         const reponse = await fetch(`http://localhost:3000/api/products/${id}`);
+        if (reponse.status >= 400 && reponse.status < 600 || !reponse.ok) {
+            throw new Error(reponse.status + '\n' + reponse.statusText);
+        }
         const resultat = await reponse.json();
         afficherCanap(resultat);
     } catch (erreur) {
@@ -37,8 +40,8 @@ async function canap() {
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
-    console.log(erreur);
-    title.innerText = "Il y a eu un problème lors du chargement du canapé !";
+    alert(`Il y a eu un problème lors du chargement du canapé :\n\n${erreur}`);
+    document.location.href = racine;
 }
 
 
@@ -51,10 +54,6 @@ function erreurChargement(erreur) {
  */
 function afficherCanap(obj) {
     AfficherQuantitePanier();
-    if (!obj.name) {
-        alert("numéro de produit invalide !");
-        document.location.href = racine; 
-    }
     const img = document.createElement('img');
     img.src = obj.imageUrl;
     img.alt = obj.altTxt;

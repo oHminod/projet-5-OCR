@@ -7,6 +7,9 @@
 async function canaps() {
     try {
         const reponse = await fetch("http://localhost:3000/api/products");
+        if (reponse.status >= 400 && reponse.status < 600 || !reponse.ok) {
+            throw new Error(reponse.status + '\n' + reponse.statusText);
+        }
         const resultat = await reponse.json();
         afficherCanaps(resultat);
     } catch (erreur) {
@@ -25,28 +28,7 @@ canaps();
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
-    const err = document.createElement("h2");
-    err.innerText = "Il y a eu un problème lors du chargement du catalogue !";
-    items.appendChild(err);
-    dump(erreur);
-}
-
-
-
-/**
- * * dump
- * Fonction pour mettre en forme un message d'erreur
- * @param  {any} obj
- */
-function dump(obj) {
-    var out = '';
-    for (var i in obj) {
-        out += i + ": " + obj[i] + "\n";
-    }
-
-    var pre = document.createElement('pre');
-    pre.innerHTML = out;
-    items.appendChild(pre)
+    alert(`Il y a eu un problème lors du chargement du catalogue :\n\n${erreur}`);
 }
 
 
