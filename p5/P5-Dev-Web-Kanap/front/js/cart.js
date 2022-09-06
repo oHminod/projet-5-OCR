@@ -165,20 +165,15 @@ function supprimerItem(item, obj) {
         totalPrice.innerText = total;
         localStorage.setItem('quantite', quant);
         AfficherQuantitePanier(quant);
-        for (let i in tabMulti) {
-            let cetItem = tabMulti[i];
-            if (cetItem.id == item.id && cetItem.color == item.color) {
-                const card = document.getElementById(`id-${item.id + item.color}`);
-                card.remove();
-                tabMulti.splice(i, 1);
-                if (tabMulti.length > 0) {
-                    let tabMult = JSON.stringify(tabMulti);
-                    localStorage.setItem('panier', tabMult);
-                }else{
-                    localStorage.clear('panier');
-                }
-                return
-            }
+        let itemIndex = tabMulti.indexOf(item);
+        const card = document.getElementById(`id-${item.id + item.color}`);
+        card.remove();
+        tabMulti.splice(itemIndex, 1);
+        if (tabMulti.length > 0) {
+            let tabMult = JSON.stringify(tabMulti);
+            localStorage.setItem('panier', tabMult);
+        }else{
+            localStorage.clear('panier');
         }
     })
 }
@@ -376,18 +371,21 @@ function submit() {
  * @param {json} commande 
  */
 async function post(commande) {
-    let response = await fetch('http://localhost:3000/api/products/order', commande)
-    .then((response) => {
-        if (response.status >= 400 && response.status < 600) {
-          throw new Error("Bad response from server");
+    try {
+        let response = await fetch('http://localhost:3000/api/products/order', commande);
+
+        if (response.status >= 400 && response.status < 600 || !response.ok) {
+            throw new Error(response.status + '\n' + response.statusText);
         }
-        return response.json()
-    }).then((result) => {
+
+        let result = await response.json();
+        
         let fin = window.location.href.indexOf("html/") + 5;
         let confirmation = window.location.href.slice(0, fin) + `confirmation.html?id=${result.orderId}`;
+    
         localStorage.clear();
         document.location.href = confirmation;
-    }).catch(function(error) {
-        alert(`Il y a un problème avec le serveur : \n${error}`);
-    });
+    } catch (error) {
+        alert(`Il y a un problème avec le serveur, contacter un administrateur : \n\n${error}`)
+    }
 }
