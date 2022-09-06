@@ -28,7 +28,7 @@ canaps();
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
-    alert(`Il y a eu un problème lors du chargement du catalogue :\n\n${erreur}`);
+    alert(`Il y a eu un problème lors du chargement du catalogue, contacter un administrateur :\n\n${erreur}`);
 }
 
 
