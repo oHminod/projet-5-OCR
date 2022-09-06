@@ -139,15 +139,9 @@ function quantiteDynamique(item, obj) {
         totalPrice.innerText = total;
         localStorage.setItem('quantite', quant);
         AfficherQuantitePanier(quant);
-        for (let cetItem of tabMulti) {
-            if (cetItem.id == item.id && cetItem.color == item.color) {
-                cetItem.quantity = nouvelleQuantite;
-                let tabMult = JSON.stringify(tabMulti);
-                localStorage.setItem('panier', tabMult);
-                return
-            }
-        }
-
+        item.quantity = nouvelleQuantite;
+        let tabMult = JSON.stringify(tabMulti);
+        localStorage.setItem('panier', tabMult);
     })
 }
 
