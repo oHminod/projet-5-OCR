@@ -8,8 +8,14 @@ search_params.has('id') ? id = search_params.get('id') : alert("Pas d'id produit
 let fin = window.location.href.indexOf("html/") + 5;
 var racine = window.location.href.slice(0, fin) + "index.html";
 var racineP = window.location.href.slice(0, fin) + "product.html";
-
-
+//Si un panier existe dans le locale storage
+let tabMulti = [];
+if (localStorage.getItem('panier')) {
+    //On récupère le tableau d'objets à partir du local storage
+    tabMulti = JSON.parse(localStorage.getItem('panier'));
+}
+let quantitePanier = 0;
+afficherQuantitePanier(quantitePanier);
 
 canap();
 /**
@@ -53,7 +59,6 @@ function erreurChargement(erreur) {
  * @param  {json} obj : objets json du produit
  */
 function afficherCanap(obj) {
-    AfficherQuantitePanier();
     const img = document.createElement('img');
     img.src = obj.imageUrl;
     img.alt = obj.altTxt;
@@ -78,7 +83,11 @@ function afficherCanap(obj) {
  */
 document.getElementById('addToCart').addEventListener('click', (e) => {
     e.preventDefault;
-    ajoutPan();
+    let quantity = parseInt(document.getElementById('quantity').value);
+    ajoutPan(quantity);
+    quantitePanier += quantity;
+    afficherQuantitePanier(quantitePanier);
+    localStorage.setItem('quantite', quantitePanier);
 })
 
 
@@ -87,88 +96,76 @@ document.getElementById('addToCart').addEventListener('click', (e) => {
  * * ajoutPan
  * Fonction qui ajoute la sélection au panier
  * en prenant garde de ne pas dupliquer les items
+ * @param {number} quantity quantité ajoutée
  */
-function ajoutPan() {
+function ajoutPan(quantity) {
     //On récupère les données du formulaire et on fabrique un json dans la variable "panier"
     let color = colors.options[colors.selectedIndex].text;
     if (color === "--SVP, choisissez une couleur --") {
         alert("Sélectionnez une couleur dans la liste");
         return
     }
-    let quantity = parseInt(document.getElementById('quantity').value);
     if (quantity <= 0) {
         alert("Sélectionnez une quantité");
         return
     }
     let panier = {
-        "id": id,
+        "id": id,//variable globale
         "color": color,
         "quantity": quantity
     };
-    let tabMulti = [];
     //Si un panier existe dans le locale storage
-    if (localStorage.getItem('panier')) {
-        //On récupère le tableau d'objets stringifiés à partir du local storage
-        tabMulti = JSON.parse(localStorage.getItem('panier'));
+    if (tabMulti.length > 0) {
         for (const item of tabMulti) {
             //Si l'id et la couleur de l'item correspondent à l'objet qu'on veut ajouter
             if (item.id == panier.id && item.color == panier.color) {
                 //on ajoute la quantité en prenant garde de manipuler des nombres
                 item.quantity += parseInt(panier.quantity);
-                tabMulti = JSON.stringify(tabMulti);
-                localStorage.setItem('panier', tabMulti);
-                compterArticles();
+                stockerPanier(tabMulti);
                 return
             }
         }
-        //On ajoute le panier au tableau d'objets stringifiés, lui-même joint pour faire une string qu'on définit comme valeur du locale storage "panier"
-        tabMulti.push(panier);
-        tabMulti = JSON.stringify(tabMulti);
-        localStorage.setItem('panier', tabMulti);
-        compterArticles();
-        return
     }
-    //On initie le locale storage "panier" avec le premier objet stringifié
+    //On initie le locale storage "panier" avec le premier objet ou on ajoute le tableau d'objets au panier
     tabMulti.push(panier);
-    localStorage.setItem('panier', JSON.stringify(tabMulti));
-    compterArticles();
+    stockerPanier(tabMulti);
+    return
 }
 
 
 
 /**
- * * compterArticles
- * Fonction qui compte le nombre total d'articles dans le panier
- * stocke le résultat dans le local storage
- * @returns le nombre d'articles dans le panier
+ * * stockerPanier
+ * Fonction servant à stocker le tableau d'objets dans le local storage
+ * @param {array} tab tableau d'objets json
+ * @returns 
  */
- function compterArticles() {
-    if (!localStorage.getItem('panier') && localStorage.getItem('quantite')) {
-        localStorage.clear('quantite');
-        return
-    }
-    //On récupère le tableau d'objets à partir du local storage
-    let tabCanaps = JSON.parse(localStorage.getItem('panier'));
-    let quantiteArticles = 0;
-    for (item of tabCanaps) {
-        quantiteArticles += parseInt(item.quantity);
-    }
-    localStorage.setItem('quantite', quantiteArticles);
-    AfficherQuantitePanier();
-    return quantiteArticles
+function stockerPanier(tab) {
+    let tabMult = JSON.stringify(tab);
+    localStorage.setItem('panier', tabMult);
+    return
 }
 
 
 
 /**
- * * AfficherQuantitePanier
+ * * afficherQuantitePanier
  * Fonction qui affiche le nombre d'articles du panier
  * au niveau du lien vers le panier dans la barre de navigation
+ * @param {number} number quantité d'articles du panier
  */
-function AfficherQuantitePanier() {
-    if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
-        let quantite = parseInt(localStorage.getItem('quantite'));
+ function afficherQuantitePanier(number) {
+    if (number && number > 0) {
         let panNav = document.querySelector('nav > ul > a:last-child > li');
-        panNav.innerText = `Panier (${quantite})`;
+        panNav.innerText = `Panier (${number})`;
+        return
     }
+    if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
+        quantitePanier = parseInt(localStorage.getItem('quantite'));
+        let panNav = document.querySelector('nav > ul > a:last-child > li');
+        panNav.innerText = `Panier (${quantitePanier})`;
+        return
+    }
+    let panNav = document.querySelector('nav > ul > a:last-child > li');
+    panNav.innerText = `Panier`;
 }
