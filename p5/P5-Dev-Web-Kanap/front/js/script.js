@@ -1,11 +1,11 @@
 "use strict";
 /**
- * * canaps
+ * * trouverCatalogue
  * Fonction asynchrone appelant 
  * une fonction avec le json du catalogue
  * une fonction avec l'erreur.
  */
-async function canaps() {
+async function trouverCatalogue() {
     try {
         const reponse = await fetch("http://localhost:3000/api/products");
         if (reponse.status >= 400 && reponse.status < 600 || !reponse.ok) {
@@ -18,7 +18,7 @@ async function canaps() {
     }
 }
 
-canaps();
+trouverCatalogue();
 
 
 
