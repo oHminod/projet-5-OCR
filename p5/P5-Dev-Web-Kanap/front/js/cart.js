@@ -52,6 +52,9 @@ function debut() {
 async function canape(item) {
     try {
         const reponse = await fetch(`http://localhost:3000/api/products/${item.id}`);
+        if (reponse.status >= 400 && reponse.status < 600 || !reponse.ok) {
+            throw new Error(reponse.status + '\n' + reponse.statusText);
+        }
         const resultat = await reponse.json();
         afficherPanier(item, resultat);
         quantiteDynamique(item, resultat);
@@ -71,7 +74,7 @@ async function canape(item) {
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
-    console.log(erreur);
+    alert(erreur);
     cart__items.innerText = "Il y a eu un problème lors du chargement du panier !";
 }
 
