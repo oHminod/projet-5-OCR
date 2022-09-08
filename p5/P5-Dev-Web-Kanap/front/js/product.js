@@ -10,14 +10,16 @@ let fin = window.location.href.indexOf("html/") + 5;
 var racine = window.location.href.slice(0, fin) + "index.html";
 var racineP = window.location.href.slice(0, fin) + "product.html";
 
-let tabMulti = [];
 //Si un panier existe dans le locale storage
+let tabMulti = [];
 if (localStorage.getItem('panier')) {
     //On récupère le tableau d'objets à partir du local storage
     tabMulti = JSON.parse(localStorage.getItem('panier'));
 }
 let quantitePanier = 0;
 afficherQuantitePanier(quantitePanier);
+
+
 
 canap();
 /**
@@ -119,14 +121,17 @@ function ajoutPan(quantity) {
     //Si un panier existe dans le locale storage
     if (tabMulti.length > 0) {
         for (const item of tabMulti) {
+            //Si l'id et la couleur de l'item correspondent à l'objet qu'on veut ajouter
             if (item.id == panier.id && item.color == panier.color) {
+                //on ajoute la quantité en prenant garde de manipuler des nombres
                 item.quantity += parseInt(panier.quantity);
+                stockerPanier(tabMulti);
+                return
             }
         }
-    }else{
-        tabMulti.push(panier);
     }
-    //On ajoute le tableau d'objets au panier
+    //On initie le locale storage "panier" avec le premier objet ou on ajoute le tableau d'objets au panier
+    tabMulti.push(panier);
     stockerPanier(tabMulti);
     return
 }
@@ -157,12 +162,12 @@ function stockerPanier(tab) {
     let panNav = document.querySelector('nav > ul > a:last-child > li');
     if (number && number > 0) {
         panNav.innerText = `Panier (${number})`;
+        return
     }
-    else if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
+    if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
         quantitePanier = parseInt(localStorage.getItem('quantite'));
         panNav.innerText = `Panier (${quantitePanier})`;
-    }else{
-        panNav.innerText = `Panier`;
+        return
     }
-    return
+    panNav.innerText = `Panier`;
 }
