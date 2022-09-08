@@ -190,19 +190,17 @@ function supprimerItem(item, obj) {
  * au niveau du lien vers le panier dans la barre de navigation
  */
 function AfficherQuantitePanier(number) {
+    let panNav = document.querySelector('nav > ul > a:last-child > li');
     if (number && number > 0) {
-        let panNav = document.querySelector('nav > ul > a:last-child > li');
         panNav.innerText = `Panier (${number})`;
         totalQuantity.innerText = number;
         return
     }
     if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
         let quantite = parseInt(localStorage.getItem('quantite'));
-        let panNav = document.querySelector('nav > ul > a:last-child > li');
         panNav.innerText = `Panier (${quantite})`;
         return
     }
-    let panNav = document.querySelector('nav > ul > a:last-child > li');
     panNav.innerText = `Panier`;
     totalQuantity.innerText = '0';
     document.querySelector('h1').innerText = "Votre panier est vide";
