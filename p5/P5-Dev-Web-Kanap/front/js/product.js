@@ -1,3 +1,4 @@
+"use strict";
 //Récupération de l'id produit
 let url = window.location.href;
 let id;
@@ -88,6 +89,10 @@ function afficherCanap(obj) {
 document.getElementById('addToCart').addEventListener('click', (e) => {
     e.preventDefault;
     let quantity = parseInt(document.getElementById('quantity').value);
+    if (quantity <= 0) {
+        alert("Sélectionner une quantité");
+        return
+    }
     ajoutPan(quantity);
     quantitePanier += quantity;
     afficherQuantitePanier(quantitePanier);
@@ -107,10 +112,6 @@ function ajoutPan(quantity) {
     let color = colors.options[colors.selectedIndex].text;
     if (color === "--SVP, choisissez une couleur --") {
         alert("Sélectionnez une couleur dans la liste");
-        return
-    }
-    if (quantity <= 0) {
-        alert("Sélectionnez une quantité");
         return
     }
     let panier = {

@@ -1,3 +1,4 @@
+"use strict";
 let tabMulti = [];
 let total = 0;
 let quant = 0;
