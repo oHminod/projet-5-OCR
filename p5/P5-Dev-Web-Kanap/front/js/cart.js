@@ -33,7 +33,7 @@ function debut() {
  */
  async function trouverPanier(tab) {
     const promesseTab = tab.map(async item => {
-        await canape(item);
+        await fetchDataCanapes(item);
     })
     await Promise.all(promesseTab);
     totalPrice.innerText = total;
@@ -43,13 +43,13 @@ function debut() {
 
 
 /**
- * *canape
+ * *fetchDataCanapes
  * Fonction asynchrone qui récupère les données manquante de chaque objet
  * et appelle la fonction afficherPanier avec le résultat et l'item
  * ou le fonction erreurChargement avec l'erreur le cas échéant
  * @param  {json} item item du panier (id, couleur, quantité)
  */
-async function canape(item) {
+async function fetchDataCanapes(item) {
     try {
         const reponse = await fetch(`http://localhost:3000/api/products/${item.id}`);
         if (reponse.status >= 400 && reponse.status < 600 || !reponse.ok) {
@@ -61,7 +61,8 @@ async function canape(item) {
         supprimerItem(item, resultat);
         total += parseInt(resultat.price) * parseInt(item.quantity);
         quant += parseInt(item.quantity);
-        } catch (erreur) {
+        }
+        catch (erreur) {
         erreurChargement(erreur);
     }
 }
@@ -70,7 +71,7 @@ async function canape(item) {
 
 /**
  * * erreurChargement
- * Fonction qui affiche l'erreur de la fonction canape
+ * Fonction qui affiche l'erreur de la fonction fetchDataCanapes
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
