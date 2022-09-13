@@ -330,12 +330,9 @@ function verifEmail(string) {
 }
 
 //ne pas utiliser le comportement par défaut du formulaire
-document.querySelector(".cart__order__form").addEventListener("submit", (e) => {
-    e.preventDefault();
-});
 //utiliser la fonction submit à la place
 document.getElementById("order").addEventListener("click", (e) => {
-    e.preventDefault;
+    e.preventDefault();
     submit();
 });
 
