@@ -4,7 +4,9 @@ let url = window.location.href;
 let id;
 url = new URL(url);
 let search_params = new URLSearchParams(url.search);
-search_params.has('id') ? id = search_params.get('id') : alert("Pas d'id produit");
+search_params.has("id")
+    ? (id = search_params.get("id"))
+    : alert("Pas d'id produit");
 
 //Variables pour les redirections
 let fin = window.location.href.indexOf("html/") + 5;
@@ -13,27 +15,25 @@ var racineP = window.location.href.slice(0, fin) + "product.html";
 
 //Si un panier existe dans le locale storage
 let tabMulti = [];
-if (localStorage.getItem('panier')) {
+if (localStorage.getItem("panier")) {
     //On récupère le tableau d'objets à partir du local storage
-    tabMulti = JSON.parse(localStorage.getItem('panier'));
+    tabMulti = JSON.parse(localStorage.getItem("panier"));
 }
 let quantitePanier = 0;
 afficherQuantitePanier(quantitePanier);
 
-
-
 canap();
 /**
  * * canap
- * Fonction asynchrone appelant 
+ * Fonction asynchrone appelant
  * une fonction avec le json du produit
  * une fonction avec l'erreur.
  */
 async function canap() {
     try {
         const reponse = await fetch(`http://localhost:3000/api/products/${id}`);
-        if (reponse.status >= 400 && reponse.status < 600 || !reponse.ok) {
-            throw new Error(reponse.status + '\n' + reponse.statusText);
+        if ((reponse.status >= 400 && reponse.status < 600) || !reponse.ok) {
+            throw new Error(reponse.status + "\n" + reponse.statusText);
         }
         const resultat = await reponse.json();
         afficherCanap(resultat);
@@ -42,11 +42,9 @@ async function canap() {
     }
 }
 
-
-
 /**
  * * erreurChargement
- * Fonction affichant l'erreur de la 
+ * Fonction affichant l'erreur de la
  * fonction canap si elle existe
  * @param  {json} erreur
  */
@@ -55,8 +53,6 @@ function erreurChargement(erreur) {
     document.location.href = racine;
 }
 
-
-
 /**
  * * afficherCanap
  * Fonction d'affichage du résultat de la requête
@@ -64,7 +60,7 @@ function erreurChargement(erreur) {
  * @param  {json} obj : objets json du produit
  */
 function afficherCanap(obj) {
-    const img = document.createElement('img');
+    const img = document.createElement("img");
     img.src = obj.imageUrl;
     img.alt = obj.altTxt;
     document.querySelector(".item__img").appendChild(img);
@@ -80,26 +76,22 @@ function afficherCanap(obj) {
     }
 }
 
-
-
 /**
  * EventListener qui ajoute la sélection au panier
  * quand on clic sur le bouton "ajouter au panier"
  */
-document.getElementById('addToCart').addEventListener('click', (e) => {
+document.getElementById("addToCart").addEventListener("click", (e) => {
     e.preventDefault;
-    let quantity = parseInt(document.getElementById('quantity').value);
+    let quantity = parseInt(document.getElementById("quantity").value);
     if (quantity <= 0) {
         alert("Sélectionner une quantité");
-        return
+        return;
     }
     ajoutPan(quantity);
     quantitePanier += quantity;
     afficherQuantitePanier(quantitePanier);
-    localStorage.setItem('quantite', quantitePanier);
-})
-
-
+    localStorage.setItem("quantite", quantitePanier);
+});
 
 /**
  * * ajoutPan
@@ -112,12 +104,12 @@ function ajoutPan(quantity) {
     let color = colors.options[colors.selectedIndex].text;
     if (color === "--SVP, choisissez une couleur --") {
         alert("Sélectionnez une couleur dans la liste");
-        return
+        return;
     }
     let panier = {
-        "id": id,//variable globale
-        "color": color,
-        "quantity": quantity
+        id: id, //variable globale
+        color: color,
+        quantity: quantity,
     };
     //Si un panier existe dans le locale storage
     if (tabMulti.length > 0) {
@@ -127,31 +119,27 @@ function ajoutPan(quantity) {
                 //on ajoute la quantité en prenant garde de manipuler des nombres
                 item.quantity += parseInt(panier.quantity);
                 stockerPanier(tabMulti);
-                return
+                return;
             }
         }
     }
     //On initie le locale storage "panier" avec le premier objet ou on ajoute le tableau d'objets au panier
     tabMulti.push(panier);
     stockerPanier(tabMulti);
-    return
+    return;
 }
-
-
 
 /**
  * * stockerPanier
  * Fonction servant à stocker le tableau d'objets dans le local storage
  * @param {array} tab tableau d'objets json
- * @returns 
+ * @returns
  */
 function stockerPanier(tab) {
     let tabMult = JSON.stringify(tab);
-    localStorage.setItem('panier', tabMult);
-    return
+    localStorage.setItem("panier", tabMult);
+    return;
 }
-
-
 
 /**
  * * afficherQuantitePanier
@@ -159,16 +147,19 @@ function stockerPanier(tab) {
  * au niveau du lien vers le panier dans la barre de navigation
  * @param {number} number quantité d'articles du panier
  */
- function afficherQuantitePanier(number) {
-    let panNav = document.querySelector('nav > ul > a:last-child > li');
+function afficherQuantitePanier(number) {
+    let panNav = document.querySelector("nav > ul > a:last-child > li");
     if (number && number > 0) {
         panNav.innerText = `Panier (${number})`;
-        return
+        return;
     }
-    if (localStorage.getItem('quantite') && parseInt(localStorage.getItem('quantite')) > 0) {
-        quantitePanier = parseInt(localStorage.getItem('quantite'));
+    if (
+        localStorage.getItem("quantite") &&
+        parseInt(localStorage.getItem("quantite")) > 0
+    ) {
+        quantitePanier = parseInt(localStorage.getItem("quantite"));
         panNav.innerText = `Panier (${quantitePanier})`;
-        return
+        return;
     }
     panNav.innerText = `Panier`;
 }
