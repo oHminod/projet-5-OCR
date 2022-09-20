@@ -13,8 +13,8 @@ let fin = window.location.href.indexOf("html/") + 5;
 var racine = window.location.href.slice(0, fin) + "index.html";
 var racineP = window.location.href.slice(0, fin) + "product.html";
 
-//Si un panier existe dans le locale storage
 let tabMulti = [];
+//Si un panier existe dans le locale storage
 if (localStorage.getItem("panier")) {
     //On récupère le tableau d'objets à partir du local storage
     tabMulti = JSON.parse(localStorage.getItem("panier"));
@@ -27,7 +27,7 @@ canap();
  * * canap
  * Fonction asynchrone appelant
  * une fonction avec le json du produit
- * une fonction avec l'erreur.
+ * ou une fonction avec l'erreur.
  */
 async function canap() {
     try {
@@ -57,17 +57,17 @@ function erreurChargement(erreur) {
  * * afficherCanap
  * Fonction d'affichage du résultat de la requête
  * effectuée dans la fonction canap
- * @param  {json} obj : objets json du produit
+ * @param  {json} canape : objet json du produit
  */
-function afficherCanap(obj) {
+function afficherCanap(canape) {
     const img = document.createElement("img");
-    img.src = obj.imageUrl;
-    img.alt = obj.altTxt;
+    img.src = canape.imageUrl;
+    img.alt = canape.altTxt;
     document.querySelector(".item__img").appendChild(img);
-    title.innerText = obj.name;
-    price.innerText = obj.price;
-    description.innerText = obj.description;
-    for (let couleur of obj.colors) {
+    title.innerText = canape.name;
+    price.innerText = canape.price;
+    description.innerText = canape.description;
+    for (let couleur of canape.colors) {
         const option = document.createElement("option");
         option.value = couleur;
         option.innerText = couleur;
