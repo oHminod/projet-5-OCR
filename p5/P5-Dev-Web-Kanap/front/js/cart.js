@@ -7,8 +7,10 @@ debut();
 listenForm();
 /**
  * * debut
- * Fonction qui récupère le panier s'il existe
- * et appelle la fonction trouverPanier
+ * Fonction qui récupère le panier et appelle
+ * la fonction trouverPanier s'il existe
+ * ou indique que le panier est vide et
+ * termine le script
  */
 function debut() {
     if (localStorage.getItem("panier")) {
@@ -41,7 +43,7 @@ async function trouverPanier(tab) {
  * *fetchDataCanapes
  * Fonction asynchrone qui récupère les données manquante de chaque objet
  * et appelle la fonction afficherPanier avec le résultat et l'item
- * ou le fonction erreurChargement avec l'erreur le cas échéant
+ * ou la fonction erreurChargement avec l'erreur le cas échéant
  * @param  {json} item item du panier (id, couleur, quantité)
  */
 async function fetchDataCanapes(item) {
@@ -179,8 +181,9 @@ function supprimerItem(item, obj) {
 
 /**
  * * afficherQuantitePanier
- * Fonction qui affiche le nombre d'articles du panier
+ * Fonction qui affiche le nombre total d'articles du panier
  * au niveau du lien vers le panier dans la barre de navigation
+ * et sur la page panier
  */
 function afficherQuantitePanier(number) {
     let panNav = document.querySelector("nav > ul > a:last-child > li");
@@ -203,7 +206,7 @@ function afficherQuantitePanier(number) {
 }
 
 /**
- * Initialisation des variables utiles à la validation du formulaire
+ * Initialisation des variables globales utiles à la validation du formulaire
  */
 let prenomOk, nomOk, adresseOk, villeOk, emailOk, contact;
 contact = {
@@ -216,7 +219,11 @@ contact = {
 
 /**
  * * listenForm
- * Fonction d'écoute des entrées du formulaire
+ * Fonction d'écoute des entrées du formulaire.
+ * Si l'entrée est invalide, affiche un message
+ * d'erreur (sauf si le champ est vide) et défini
+ * false pour la variable prenomOk.
+ * Si l'entrée est valide, défini true à prenomOk.
  */
 function listenForm() {
     firstName.addEventListener("input", (e) => {
@@ -324,8 +331,7 @@ function verifVille(string) {
  * @returns bool
  */
 function verifEmail(string) {
-    let re =
-        /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/;
     return re.test(string);
 }
 
