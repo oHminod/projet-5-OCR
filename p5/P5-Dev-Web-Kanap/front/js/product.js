@@ -10,8 +10,8 @@ search_params.has("id")
 
 //Variables pour les redirections
 let fin = window.location.href.indexOf("html/") + 5;
-var racine = window.location.href.slice(0, fin) + "index.html";
-var racineP = window.location.href.slice(0, fin) + "product.html";
+let racine = window.location.href.slice(0, fin) + "index.html";
+let racineP = window.location.href.slice(0, fin) + "product.html";
 
 let tabMulti = [];
 //Si un panier existe dans le locale storage
@@ -45,7 +45,7 @@ async function canap() {
 /**
  * * erreurChargement
  * Fonction affichant l'erreur de la
- * fonction canap si elle existe
+ * fonction canap si elle existe.
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
@@ -56,7 +56,7 @@ function erreurChargement(erreur) {
 /**
  * * afficherCanap
  * Fonction d'affichage du résultat de la requête
- * effectuée dans la fonction canap
+ * effectuée dans la fonction canap.
  * @param  {json} canape : objet json du produit
  */
 function afficherCanap(canape) {
@@ -78,7 +78,7 @@ function afficherCanap(canape) {
 
 /**
  * EventListener qui ajoute la sélection au panier
- * quand on clic sur le bouton "ajouter au panier"
+ * quand on clic sur le bouton "ajouter au panier".
  */
 document.getElementById("addToCart").addEventListener("click", (e) => {
     e.preventDefault;
@@ -96,7 +96,7 @@ document.getElementById("addToCart").addEventListener("click", (e) => {
 /**
  * * ajoutPan
  * Fonction qui ajoute la sélection au panier
- * en prenant garde de ne pas dupliquer les items
+ * en prenant garde de ne pas dupliquer les items.
  * @param {number} quantity quantité ajoutée
  */
 function ajoutPan(quantity) {
@@ -131,7 +131,7 @@ function ajoutPan(quantity) {
 
 /**
  * * stockerPanier
- * Fonction servant à stocker le tableau d'objets dans le local storage
+ * Fonction servant à stocker le tableau d'objets dans le local storage.
  * @param {array} tab tableau d'objets json
  * @returns
  */
@@ -144,7 +144,7 @@ function stockerPanier(tab) {
 /**
  * * afficherQuantitePanier
  * Fonction qui affiche le nombre d'articles du panier
- * au niveau du lien vers le panier dans la barre de navigation
+ * au niveau du lien vers le panier dans la barre de navigation.
  * @param {number} number quantité d'articles du panier
  */
 function afficherQuantitePanier(number) {

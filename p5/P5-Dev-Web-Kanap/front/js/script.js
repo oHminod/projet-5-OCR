@@ -23,7 +23,7 @@ trouverCatalogue();
 /**
  * * erreurChargement
  * Fonction affichant l'erreur de la
- * fonction trouverCatalogue si elle existe
+ * fonction trouverCatalogue si elle existe.
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
@@ -35,7 +35,7 @@ function erreurChargement(erreur) {
 /**
  * * afficherCanaps
  * Fonction d'affichage du résultat de la requête
- * effectuée dans la fonction trouverCatalogue
+ * effectuée dans la fonction trouverCatalogue.
  * @param  {json} catalogue : tableau d'objets json
  */
 function afficherCanaps(catalogue) {
@@ -69,7 +69,7 @@ function afficherCanaps(catalogue) {
 /**
  * * AfficherQuantitePanier
  * Fonction qui affiche le nombre d'articles du panier
- * au niveau du lien vers le panier dans la barre de navigation
+ * au niveau du lien vers le panier dans la barre de navigation.
  */
 function AfficherQuantitePanier() {
     if (

@@ -10,7 +10,7 @@ listenForm();
  * Fonction qui récupère le panier et appelle
  * la fonction trouverPanier s'il existe
  * ou indique que le panier est vide et
- * termine le script
+ * termine le script.
  */
 function debut() {
     if (localStorage.getItem("panier")) {
@@ -26,8 +26,10 @@ function debut() {
 
 /**
  * * trouverPanier
- * Fonction asynchrone qui appelle la fonction canap
- * avec chaque item du panier en parallèle
+ * Fonction asynchrone qui appelle la fonction fetchDataCanapes
+ * avec chaque item du panier en parallèle, appelle la
+ * fonction afficherQuantitePanier une fois toutes les
+ * informations reçues.
  * @param  {array} tab tableau d'objets json
  */
 async function trouverPanier(tab) {
@@ -44,7 +46,7 @@ async function trouverPanier(tab) {
  * Fonction asynchrone qui récupère les données manquante de chaque objet
  * et appelle la fonction afficherPanier avec le résultat et l'item
  * ou la fonction erreurChargement avec l'erreur le cas échéant
- * @param  {json} item item du panier (id, couleur, quantité)
+ * @param  {json} item item du panier (id, couleur, quantité).
  */
 async function fetchDataCanapes(item) {
     try {
@@ -56,10 +58,6 @@ async function fetchDataCanapes(item) {
         }
         const resultat = await reponse.json();
         afficherPanier(item, resultat);
-        quantiteDynamique(item, resultat);
-        supprimerItem(item, resultat);
-        total += parseInt(resultat.price) * parseInt(item.quantity);
-        quant += parseInt(item.quantity);
     } catch (erreur) {
         erreurChargement(erreur);
     }
@@ -67,20 +65,23 @@ async function fetchDataCanapes(item) {
 
 /**
  * * erreurChargement
- * Fonction qui affiche l'erreur de la fonction fetchDataCanapes
+ * Fonction qui affiche l'erreur de la fonction fetchDataCanapes.
  * @param  {json} erreur
  */
 function erreurChargement(erreur) {
     alert(erreur);
+    console.log(erreur);
     cart__items.innerText =
         "Il y a eu un problème lors du chargement du panier !";
 }
 
 /**
  * * afficherPanier
- * Fonction qui affiche un item du panier
+ * Fonction qui affiche un item du panier et active les fonctions d'écoute
+ * des évènements (modification de la quantité et suppression) liès
+ * à cet item.
  * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
- * @param  {json} item : item du panier avec la quantité et la couleur
+ * @param  {json} item : item du panier avec la quantité et la couleur.
  */
 function afficherPanier(item, obj) {
     const canap = document.createElement("article");
@@ -113,13 +114,17 @@ function afficherPanier(item, obj) {
         </div>
     </div>`;
     cart__items.appendChild(canap);
+    quantiteDynamique(item, obj);
+    supprimerItem(item, obj);
+    total += parseInt(obj.price) * parseInt(item.quantity);
+    quant += parseInt(item.quantity);
 }
 
 /**
  * * quantiteDynamique
  * Fonction permettant de mettre à jour les quantités et le prix total
  * au niveau de l'affichage et du locale storage quand on fait
- * des modifications dans la page panier
+ * des modifications dans la page panier.
  * @param  {json} item : item du panier avec la quantité et la couleur
  * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
  * @param  {int} ancienneQuantite : quantité avant modification
@@ -149,7 +154,7 @@ function quantiteDynamique(item, obj) {
 /**
  * * supprimerItem
  * Fonction permettant de supprimer un item du panier
- * en mettant à jour les quantités et le prix total
+ * en mettant à jour les quantités et le prix total.
  * @param  {json} item : item du panier avec la quantité et la couleur
  * @param  {json} obj : objet canape de l'API correspondant à l'item du panier
  */
@@ -183,7 +188,7 @@ function supprimerItem(item, obj) {
  * * afficherQuantitePanier
  * Fonction qui affiche le nombre total d'articles du panier
  * au niveau du lien vers le panier dans la barre de navigation
- * et sur la page panier
+ * et sur la page panier.
  */
 function afficherQuantitePanier(number) {
     let panNav = document.querySelector("nav > ul > a:last-child > li");
@@ -206,7 +211,7 @@ function afficherQuantitePanier(number) {
 }
 
 /**
- * Initialisation des variables globales utiles à la validation du formulaire
+ * Initialisation des variables globales utiles à la validation du formulaire.
  */
 let prenomOk, nomOk, adresseOk, villeOk, emailOk, contact;
 contact = {
@@ -289,7 +294,7 @@ function listenForm() {
 
 /**
  * * verifNom
- * Fonction pour vérifier le nom et le prénom
+ * Fonction pour vérifier le nom et le prénom.
  * @param {string} string
  * @returns bool
  */
@@ -301,7 +306,7 @@ function verifNom(string) {
 
 /**
  * * verifAdresse
- * Fonction pour vérifier l'adresse
+ * Fonction pour vérifier l'adresse.
  * @param {string} string
  * @returns bool
  */
@@ -314,7 +319,7 @@ function verifAdresse(string) {
 
 /**
  * * verifVille
- * Fonction pour vérifier le nom de la ville
+ * Fonction pour vérifier le nom de la ville.
  * @param {string} string
  * @returns bool
  */
@@ -326,7 +331,7 @@ function verifVille(string) {
 
 /**
  * * verifEmail
- * Fonction pour vérifier l'email
+ * Fonction pour vérifier l'email.
  * @param {string} string
  * @returns bool
  */
@@ -345,7 +350,7 @@ document.getElementById("order").addEventListener("click", (e) => {
 /**
  * * submit
  * Fonction pour mettre en forme les données du formulaire
- * avant de les envoyer à la fonction post()
+ * avant de les envoyer à la fonction post().
  */
 function submit() {
     let panierOrder = JSON.parse(localStorage.getItem("panier"));
@@ -389,7 +394,7 @@ function submit() {
  * Fonction asynchrone qui envois une requête à l'api
  * avec les données du client et du panier
  * renvois vers la page de confirmation avec l'orederId dans le get
- * en cas de succès
+ * en cas de succès.
  * @param {json} commande
  */
 async function post(commande) {
