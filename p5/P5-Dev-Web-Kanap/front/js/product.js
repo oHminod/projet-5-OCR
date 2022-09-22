@@ -123,7 +123,7 @@ function ajoutPan() {
             }
         }
     }
-    //On initie le locale storage "panier" avec le premier objet ou on ajoute le tableau d'objets au panier
+    //On initie le locale storage "panier" avec le premier objet
     tabMulti.push(panier);
     stockerPanier(tabMulti);
     return;
