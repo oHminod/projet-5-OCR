@@ -65,6 +65,7 @@ function afficherCanap(canape) {
     img.alt = canape.altTxt;
     document.querySelector(".item__img").appendChild(img);
     title.innerText = canape.name;
+    document.title = canape.name;
     price.innerText = canape.price;
     description.innerText = canape.description;
     for (let couleur of canape.colors) {
