@@ -83,24 +83,23 @@ function afficherCanap(canape) {
  */
 document.getElementById("addToCart").addEventListener("click", (e) => {
     e.preventDefault;
-    let quantity = parseInt(document.getElementById("quantity").value);
-    if (quantity <= 0) {
-        alert("Sélectionner une quantité");
-        return;
-    }
-    ajoutPan(quantity);
-    quantitePanier += quantity;
-    afficherQuantitePanier(quantitePanier);
-    localStorage.setItem("quantite", quantitePanier);
+    ajoutPan();
 });
 
 /**
  * * ajoutPan
  * Fonction qui ajoute la sélection au panier
  * en prenant garde de ne pas dupliquer les items.
- * @param {number} quantity quantité ajoutée
  */
-function ajoutPan(quantity) {
+function ajoutPan() {
+    let quantity = parseInt(document.getElementById("quantity").value);
+    if (quantity <= 0) {
+        alert("Sélectionner une quantité");
+        return;
+    }
+    quantitePanier += quantity;
+    afficherQuantitePanier(quantitePanier);
+    localStorage.setItem("quantite", quantitePanier);
     //On récupère les données du formulaire et on fabrique un json dans la variable "panier"
     let color = colors.options[colors.selectedIndex].text;
     if (color === "--SVP, choisissez une couleur --") {
