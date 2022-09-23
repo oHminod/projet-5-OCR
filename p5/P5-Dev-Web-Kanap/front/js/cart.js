@@ -84,35 +84,76 @@ function erreurChargement(erreur) {
  * @param  {json} item : item du panier avec la quantité et la couleur.
  */
 function afficherPanier(item, obj) {
+    if (item.quantity > 100) {
+        item.quantity = 100;
+    }
     const canap = document.createElement("article");
     canap.classList.add("cart__item");
     canap.setAttribute("data-id", item.id);
     canap.setAttribute("data-color", item.color);
     canap.id = "id-" + item.id + item.color;
-    canap.innerHTML = `
-    <div class="cart__item__img">
-        <img src="${obj.imageUrl}" alt="${obj.altTxt}">
-    </div>
-    <div class="cart__item__content">
-        <div class="cart__item__content__description">
-        <h2>${obj.name}</h2>
-        <p>${item.color}</p>
-        <p>${obj.price} €</p>
-        </div>
-        <div class="cart__item__content__settings">
-        <div class="cart__item__content__settings__quantity">
-            <p>Qté : </p>
-            <input type="number" class="itemQuantity" id="quant-${
-                item.id + item.color
-            }" name="itemQuantity" min="1" max="100" value="${item.quantity}">
-        </div>
-        <div class="cart__item__content__settings__delete">
-            <p class="deleteItem" id="delete-${
-                item.id + item.color
-            }">Supprimer</p>
-        </div>
-        </div>
-    </div>`;
+
+    const divImg = document.createElement("div");
+    divImg.classList.add("cart__item__img");
+    canap.appendChild(divImg);
+
+    const imgProduct = document.createElement("img");
+    imgProduct.src = obj.imageUrl;
+    imgProduct.alt = obj.altTxt;
+    divImg.appendChild(imgProduct);
+
+    const divItem = document.createElement("div");
+    divItem.classList.add("cart__item__content");
+    canap.appendChild(divItem);
+
+    const divDescription = document.createElement("div");
+    divDescription.classList.add("cart__item__content__description");
+    divItem.appendChild(divDescription);
+
+    const titreProd = document.createElement("h2");
+    titreProd.innerText = obj.name;
+    divDescription.appendChild(titreProd);
+
+    const couleurProd = document.createElement("p");
+    couleurProd.innerText = item.color;
+    divDescription.appendChild(couleurProd);
+
+    const quantiteProd = document.createElement("p");
+    quantiteProd.innerText = obj.price + " €";
+    divDescription.appendChild(quantiteProd);
+
+    const divSettings = document.createElement("div");
+    divSettings.classList.add("cart__item__content__settings");
+    divItem.appendChild(divSettings);
+
+    const divSetQuantity = document.createElement("div");
+    divSetQuantity.classList.add("cart__item__content__settings__quantity");
+    divSettings.appendChild(divSetQuantity);
+
+    const pQuantite = document.createElement("p");
+    pQuantite.innerText = "Qté : ";
+    divSetQuantity.appendChild(pQuantite);
+
+    const inputQuantite = document.createElement("input");
+    inputQuantite.setAttribute("type", "number");
+    inputQuantite.setAttribute("name", "itemQuantity");
+    inputQuantite.setAttribute("min", "1");
+    inputQuantite.setAttribute("max", "100");
+    inputQuantite.classList.add("itemQuantity");
+    inputQuantite.id = "quant-" + item.id + item.color;
+    inputQuantite.value = item.quantity;
+    divSetQuantity.appendChild(inputQuantite);
+
+    const divDelete = document.createElement("div");
+    divDelete.classList.add("cart__item__content__settings__delete");
+    divSettings.appendChild(divDelete);
+
+    const pDelete = document.createElement("p");
+    pDelete.classList.add("deleteItem");
+    pDelete.id = "delete-" + item.id + item.color;
+    pDelete.innerText = "Supprimer";
+    divDelete.appendChild(pDelete);
+
     cart__items.appendChild(canap);
     quantiteDynamique(item, obj);
     supprimerItem(item, obj);
@@ -135,6 +176,10 @@ function quantiteDynamique(item, obj) {
         let nouvelleQuantite = parseInt(e.target.value);
         if (nouvelleQuantite < 0) {
             nouvelleQuantite = 0;
+            e.target.value = 0;
+        } else if (nouvelleQuantite > 100) {
+            nouvelleQuantite = 100;
+            e.target.value = 100;
         }
         let ancienneQuantite = parseInt(item.quantity);
         let offsetQuantite = nouvelleQuantite - ancienneQuantite;

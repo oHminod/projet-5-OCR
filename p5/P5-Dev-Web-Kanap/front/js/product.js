@@ -97,9 +97,14 @@ function ajoutPan() {
         alert("Sélectionner une quantité");
         return;
     }
+    if (quantity > 100) {
+        alert("Maximum 100 produits d'une catégorie");
+        return;
+    }
     quantitePanier += quantity;
     afficherQuantitePanier(quantitePanier);
     localStorage.setItem("quantite", quantitePanier);
+
     //On récupère les données du formulaire et on fabrique un json dans la variable "panier"
     let color = colors.options[colors.selectedIndex].text;
     if (color === "--SVP, choisissez une couleur --") {
@@ -118,6 +123,13 @@ function ajoutPan() {
             if (item.id == panier.id && item.color == panier.color) {
                 //on ajoute la quantité en prenant garde de manipuler des nombres
                 item.quantity += parseInt(panier.quantity);
+                if (item.quantity > 100) {
+                    alert("Maximum 100 produits d'une catégorie");
+                    quantitePanier -= quantity;
+                    afficherQuantitePanier(quantitePanier);
+                    localStorage.setItem("quantite", quantitePanier);
+                    return;
+                }
                 stockerPanier(tabMulti);
                 return;
             }
@@ -136,6 +148,9 @@ function ajoutPan() {
  * @returns
  */
 function stockerPanier(tab) {
+    for (const item of tab) {
+        item.quantity > 100 ? (item.quantity = 100) : "";
+    }
     let tabMult = JSON.stringify(tab);
     localStorage.setItem("panier", tabMult);
     return;
