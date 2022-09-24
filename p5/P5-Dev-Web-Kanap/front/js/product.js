@@ -121,15 +121,16 @@ function ajoutPan() {
         for (const item of tabMulti) {
             //Si l'id et la couleur de l'item correspondent à l'objet qu'on veut ajouter
             if (item.id == panier.id && item.color == panier.color) {
-                //on ajoute la quantité en prenant garde de manipuler des nombres
-                item.quantity += parseInt(panier.quantity);
-                if (item.quantity > 100) {
+                const verifQuantite = item.quantity + parseInt(panier.quantity);
+                if (verifQuantite > 100) {
                     alert("Maximum 100 produits d'une catégorie");
                     quantitePanier -= quantity;
                     afficherQuantitePanier(quantitePanier);
                     localStorage.setItem("quantite", quantitePanier);
                     return;
                 }
+                //on ajoute la quantité en prenant garde de manipuler des nombres
+                item.quantity += parseInt(panier.quantity);
                 stockerPanier(tabMulti);
                 return;
             }
@@ -148,9 +149,6 @@ function ajoutPan() {
  * @returns
  */
 function stockerPanier(tab) {
-    for (const item of tab) {
-        item.quantity > 100 ? (item.quantity = 100) : "";
-    }
     let tabMult = JSON.stringify(tab);
     localStorage.setItem("panier", tabMult);
     return;
