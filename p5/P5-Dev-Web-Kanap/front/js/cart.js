@@ -84,9 +84,6 @@ function erreurChargement(erreur) {
  * @param  {json} item : item du panier avec la quantité et la couleur.
  */
 function afficherPanier(item, obj) {
-    if (item.quantity > 100) {
-        item.quantity = 100;
-    }
     const canap = document.createElement("article");
     canap.classList.add("cart__item");
     canap.setAttribute("data-id", item.id);
